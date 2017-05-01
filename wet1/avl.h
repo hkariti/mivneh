@@ -137,6 +137,7 @@ public:
   void rollLL(Node* top) {
     Node* second = top->left;
     top->left = second->right;
+    second->right = top;
     second->parent = top->parent;
 
     // update parent of the top node
