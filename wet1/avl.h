@@ -19,18 +19,66 @@ public:
     Node* current;
 
   public:
-    Value& operator*() const;
-    Iterator operator++();
-    Iterator operator--();
-    bool operator==(const Iterator& second) const;
-    bool operator!=(const Iterator& second) const;
-    void repalceWith(const Key& key, const Value& value);
+    Iterator(Node* node) : current(node) {};
+    Key& operator*() const {
+      return *(current->key);
+    };
+    Iterator& operator++() {
+      Iterator copy(this);
+      if (current->right != NULL) {
+        current = current->right;
+      } else {
+        Node* previous = current;
+        current = current->parent;
+        while (current->right == previous) {
+          previous = current;
+          current = current->parent;
+          if (current == NULL) break;
+        }
+      }
+      return copy;
+    }
+    Iterator& operator--() {
+      Iterator copy(this);
+      if (current->left != NULL) {
+        current = current->left;
+      } else {
+        Node* previous = current;
+        current = current->parent;
+        while (current->left == previous) {
+          previous = current;
+          current = current->parent;
+          if (current == NULL) break;
+        }
+      }
+      return copy;
+    }
+    bool operator==(const Iterator& second) const {
+      return current == second.current;
+    }
+    bool operator!=(const Iterator& second) const {
+      return !(this == second);
+    }
+    Value& value() const {
+      return *(current->value);
+    }
+    Iterator left() const {
+      return Iterator(current->left);
+    }
+    Iterator right() const {
+      return Iterator(current->right);
+    }
+    void repalceWith(const Key& key, const Value& value) {
+      current->key = key;
+      current->value = value;
+    }
   };
 
 private:
   class Node {
   private:
     friend void Iterator::repalceWith(const Key& key, const Value& value);
+    ~Node();
     Key* key;
     Value* value;
     Node* parent;
