@@ -39,8 +39,16 @@ void AVLTreeRollTest(){
   std::cout << "right: " << *(((tree4.head)->right)->key) << std::endl;
   std::cout << "left: " << *(((tree4.head)->left)->key) << std::endl;
 
+  tree2.print();
+  std::cout << "checkOrder" << std::endl;
+  tree2.checkOrder();
+  std::cout << "checkBF" << std::endl;
+  tree2.checkBF();
+  std::cout << "done" << std::endl;
 }
 
-main(){
+int main(){
  AVLTreeRollTest();
+
+ return 0;
 }
