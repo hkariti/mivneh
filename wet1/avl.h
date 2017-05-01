@@ -7,7 +7,7 @@
 template <class Key, class Value>
 class AVLTree {
 
-private:
+public:
   class Node;
 
 public:
@@ -74,26 +74,31 @@ public:
     }
   };
 
-private:
+public:
   class Node {
   public:
     friend void Iterator::repalceWith(const Key& key, const Value& value);
     ~Node() {
+      delete key;
+      delete value;
       delete left;
       delete right;
     }
     Key* key;
     Value* value;
-    Node* parent;
     Node* left;
     Node* right;
     int BF;
     int hightRight;
     int hightLeft;
     int hight;
+    Node* parent;
 
 
-    Node(const Key& key, const Value& value, const Node* parent=NULL): key(key), value(value), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent) {};
+    Node(const Key& key, const Value& value, Node* parent=NULL): left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0),hight(1), parent(parent) {
+      this->key = new Key(key);
+      this->value = new Value(value);
+    }
   };
 
   class NotFound : public std::exception {};
@@ -231,7 +236,9 @@ public:
 AVLTree() {
   head = NULL;
 }
-~AVLTree();
+  ~AVLTree(){
+    delete head;
+  }
 
 Value& find(const Key& key) const{// may not be const
   Iterator it = first();
@@ -251,13 +258,15 @@ Value& find(const Key& key) const{// may not be const
 
 void insert(const Key& key, const Value& value)
 {
+  std::cout << "inserting key " << key << " value " << value << std::endl;
   if(head == NULL) {
-    head = new Node(key, value);
+    Node* node = new Node(key, value);
+    head = node;
     return;
   }
   Node* current = head;
-  while(current->key != key) {
-    if(current->key > key) {
+  while(*(current->key) != key) {
+    if(*(current->key) > key) {
       if(current->right == NULL) {
         break;
       }
@@ -270,19 +279,19 @@ void insert(const Key& key, const Value& value)
       current = current->left;
     }
   }
-  if(current->key == key) {
+  if(*(current->key) == key) {
     throw AlreadyThere();
   }
 
-  if(current->left == NULL && current->key > key) {
-    Node addition = new Node(key, value);
-    current->left = &addition;
-    addition->parent = &current;
+  if(current->left == NULL && *(current->key) > key) {
+    Node* addition = new Node(key, value);
+    current->left = addition;
+    addition->parent = current;
   }
-  if(current->right == NULL && current->key < key) {
-    Node addition = new Node(key, value);
-    current->right = &addition;
-    addition->parent = &current;
+  if(current->right == NULL && *(current->key) < key) {
+    Node* addition = new Node(key, value);
+    current->right = addition;
+    addition->parent = current;
   }
 
   balance(current);
@@ -357,6 +366,10 @@ void remove(const Key& key) {
   delete current;
   balance(parent);
 }
+
+  Iterator root() const{
+    return Iterator(head);
+  }
 
 Iterator first() const{
   Node current = head;
