@@ -24,8 +24,8 @@ public:
     Key& operator*() const {
       return *(current->key);
     };
-    Iterator& operator++() {
-      Iterator copy(this);
+    Iterator operator++(int) {
+      Iterator copy(this->current);
       if (current->right != NULL) {
         current = current->right;
       } else {
@@ -39,8 +39,8 @@ public:
       }
       return copy;
     }
-    Iterator& operator--() {
-      Iterator copy(this);
+    Iterator operator--(int) {
+      Iterator copy(this->current);
       if (current->left != NULL) {
         current = current->left;
       } else {
@@ -58,7 +58,7 @@ public:
       return current == second.current;
     }
     bool operator!=(const Iterator& second) const {
-      return !(this == second);
+      return !(*this == second);
     }
     Value& value() const {
       return *(current->value);
@@ -105,6 +105,7 @@ public:
   class NotFound : public std::exception {};
   class isEmpty : public std::exception {};
   class AlreadyThere : public std::exception {};
+  class DebugException : public std::exception {};
 
   Node* head;
 
@@ -216,16 +217,21 @@ public:
   }
 
   //debug functions
-  void checkBF(Node* base) const {
+  void checkBFRecurse(Node* base) const {
+    if (!base) return;
+
     if (base->BF > 1 || base->BF < -1) {
       std::cout << "OH NOES! " << base->key << " has BF of " << base->BF << std::endl;
-      throw std::exception(base->key);
+      throw DebugException();
     }
 
-    checkBF(base->left);
-    checkBF(base->right);
+    checkBFRecurse(base->left);
+    checkBFRecurse(base->right);
   }
 
+  void checkBF() const {
+    checkBFRecurse(head);
+  }
   void checkOrder() const {
     Iterator it(first());
     Key previous = *it;
@@ -233,7 +239,7 @@ public:
     for (Key current=*it; it != end(); it++) {
       if (current < previous) {
         std::cout << "OH NOES! " << current << " < " << previous << " but is sorted as >!" << std::endl;
-        throw std::exception(std::pair<Key, Key>(current, previous));
+        throw DebugException();
       }
     }
   }
@@ -399,7 +405,7 @@ void remove(const Key& key) {
   }
 
 Iterator first() const{
-  Node current = head;
+  Node* current = head;
   while(current->left != NULL) {
     current = current->left;
   }
@@ -408,7 +414,7 @@ Iterator first() const{
 }
 
 Iterator last() const{
-  Node current = head;
+  Node* current = head;
   while(current->right != NULL) {
     current = current->right;
   }
