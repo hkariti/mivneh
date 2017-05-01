@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <exception>
+#include <cmath>
 
 template <class Key, class Value>
 class AVLTree {
@@ -232,6 +233,27 @@ AVLTree() {
   head = NULL;
 }
 ~AVLTree();
+
+  void printInOrder(const Node* node) const {
+    if (!node) return;;
+    printInOrder(node->left);
+    std::cout << *(node->key) << "(" << *(node->value) << ") ";
+    printInOrder(node->right);
+  }
+  void printPostOrder(const Node* node) const {
+    if (!node) return;;
+    printPostOrder(node->left);
+    printPostOrder(node->right);
+    std::cout << *(node->key) << " ";
+  }
+  void print() const {
+    std::cout << "in-order:" << std::endl;
+    printInOrder(head);
+    std::cout << std::endl;
+    std::cout << "post-order:" << std::endl;
+    printPostOrder(head);
+    std::cout << std::endl;
+  }
 
 Value& find(const Key& key) const{// may not be const
   Iterator it = first();
