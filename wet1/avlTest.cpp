@@ -1,5 +1,12 @@
 #include "avl.h"
 
+void treeSanity(AVLTree<int, int>& tree) {
+  std::cout << "Sanity" << std::endl;
+  tree.print();
+  tree.checkOrder();
+  tree.checkBF();
+}
+
 void AVLTreeRollTest(){
   //rolll RR test
   AVLTree<int, int> tree;
@@ -39,12 +46,10 @@ void AVLTreeRollTest(){
   std::cout << "right: " << *(((tree4.head)->right)->key) << std::endl;
   std::cout << "left: " << *(((tree4.head)->left)->key) << std::endl;
 
-  tree2.print();
-  std::cout << "checkOrder" << std::endl;
-  tree2.checkOrder();
-  std::cout << "checkBF" << std::endl;
-  tree2.checkBF();
-  std::cout << "done" << std::endl;
+  treeSanity(tree);
+  treeSanity(tree2);
+  treeSanity(tree3);
+  treeSanity(tree4);
 }
 
 int main(){
