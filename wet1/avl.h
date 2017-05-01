@@ -248,7 +248,7 @@ AVLTree() {
   void printInOrder(const Node* node) const {
     if (!node) return;;
     printInOrder(node->left);
-    std::cout << *(node->key) << "(" << *(node->value) << ") ";
+    std::cout << *(node->key) << " ";
     printInOrder(node->right);
   }
   void printPostOrder(const Node* node) const {
