@@ -149,6 +149,9 @@ public:
         (top->parent)->left = second;
       }
     }
+    else{
+      this->head = second;
+    }
     top->parent = second;
 
     //update tree hight and BF
