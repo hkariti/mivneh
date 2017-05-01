@@ -13,7 +13,7 @@ private:
 public:
   /*
     Class assumes the key of the tree has overloaded operators: >,<,==,!=
-   */
+  */
   class Iterator{
   private:
     Node* current;
@@ -98,6 +98,7 @@ private:
 
   class NotFound : public std::exception {};
   class isEmpty : public std::exception {};
+  class AlreadyThere : public std::exception {};
 
   Node* head;
 
@@ -169,10 +170,10 @@ private:
       newRightHight = (top->right)->hight;
     }
     if(newRightHight > newLeftHight){
-      top->hight = newRightHight;
+      top->hight = newRightHight + 1;
     }
     else{
-      top->hight = newLeftHight;
+      top->hight = newLeftHight + 1;
     }
     top->hightLeft = newLeftHight;
     top->hightRight = newRightHight;
@@ -181,110 +182,30 @@ private:
 
   //can only receive a node that has a two sons
   static void balance(Node* current){
-  if(current->BF == 2){
-    if((current->left)->BF == -1){
-      rollLR(current);
-    }
-  }
-  if(current->BF == 2){
-    if((current->left)->BF >= 0){
-      rollLL(current);
-    }
-  }
-  if(current->BF == -2){
-    if((current->right)->BF <= 0){
-      rollRR(current);
-    }
-  }
-  if(current->BF == -2){
-    if((current->right)->BF == 1){
-      rollRL(current);
-    }
-  }
-  }
-
-  static void searchForInsert(Node* current, const Key& key, const Value& value){
-    if(current->left == NULL && current->key > key){
-      Node addition = new Node(key, value);
-      current->left = &addition;
-      addition->parent = &current;
-      current->hightLeft++;
-      if(current->hightLeft > current->hight){
-        current->hight = current->hightLeft;
-      }
-      current->BF++;
-      return;
-    }
-    if(current->right == NULL && current->key < key){
-      Node addition = new Node(key, value);
-      current->right = &addition;
-      addition->parent = &current;
-      current->hightRight++;
-      if(current->hightRight > current->hight){
-        current->hight = current->hightRight;
-      }
-      current->BF--;
-      return;
-    }
-    if(current->key > key){
-      searchForInsert(current->left, key, value);
-    }
-    searchForInsert(current->right, key, value);
-
-    balance(current);
-    return;
-
-  }
-
-  static void searchForRemove(Node* current, const Key& key){
-    if(current->key == key){
-      //no sons
-      if(current->left == NULL && current->right == NULL){
-        Node* parent = current->parent;
-        if(parent->left == current){
-          parent->left = NULL;
+    while(current != NULL){
+      updateHightAndBF(current);
+      if(current->BF == 2){
+        if((current->left)->BF == -1){
+          rollLR(current);
         }
-        else{
-          parent->right = NULL;
-        }
-        delete current;
-        return;
       }
-      //one son
-      if(current->left == NULL && current->right != NULL){
-        Node* parent = current->parent;
-        if(parent->left == current){
-          parent->left = current->right;
+      if(current->BF == 2){
+        if((current->left)->BF >= 0){
+          rollLL(current);
         }
-        else{
-          parent->right = current->right;
-        }
-        return;
       }
-      if(current->left != NULL && current->right == NULL){
-        Node* parent = current->parent;
-        if(parent->left == current){
-          parent->left = current->left;
+      if(current->BF == -2){
+        if((current->right)->BF <= 0){
+          rollRR(current);
         }
-        else{
-          parent->right = current->left;
+      }
+      if(current->BF == -2){
+        if((current->right)->BF == 1){
+          rollRL(current);
         }
-        return;
       }
-      Node* next = current->right;
-      while(next->left != NULL){
-        next = next->left;
-      }
-      Key tempKey = next->key;
-      next->key = current->key;
-      current->key = tempKey;
-      Value tempValue = next->value;
-      next->value = current->value;
-      current->value = tempValue;
-
-      
+      current = current->parent;
     }
-
   }
 
   //debug functions
@@ -311,63 +232,153 @@ private:
   }
 
 public:
-  AVLTree(){
-    head = NULL;
-  }
-  ~AVLTree();
+AVLTree(){
+  head = NULL;
+}
+~AVLTree();
 
-  Value& find(const Key& key) const{// may not be const
-    Iterator it = first();
-    while(it != end()){
-      if(key > *it){
-        it = it.right();
+Value& find(const Key& key) const{// may not be const
+  Iterator it = first();
+  while(it != end()){
+    if(key > *it){
+      it = it.right();
+    }
+    if(key < *it){
+      it = it.left;
+    }
+    return it.value;
+  }
+  throw NotFound();
+}
+
+
+
+void insert(const Key& key, const Value& value)
+{
+  if(head == NULL){
+    head = new Node(key, value);
+    return;
+  }
+  Node* current = head;
+  while(current->key != key){
+    if(current->key > key){
+      if(current->right == NULL){
+        break;
       }
-      if(key < *it){
-        it = it.left;
+      current = current->right;
+      continue;
+    }
+    else{
+      if(current->left == NULL){
+        break;
       }
-      return it.value;
+      current = current->left;
+      continue;
     }
-    throw NotFound();
-    }
-
-
-
-  void insert(const Key& key, const Value& value)
-  {
-    if(head == NULL){
-      head = new Node(key, value);
-    }
-    searchForInsert(head, key, value);
+  }
+  if(current->key == key){
+    throw AlreadyThere();
   }
 
-  void remove(const Key& key){
-    if(head == NULL){
-      throw isEmpty();
-    }
-    find(key); // checks that the pair exists, if not will throw an exception
-    searchForRemove(head, key, value);
+  if(current->left == NULL && current->key > key){
+    Node addition = new Node(key, value);
+    current->left = &addition;
+    addition->parent = &current;
+  }
+  if(current->right == NULL && current->key < key){
+    Node addition = new Node(key, value);
+    current->right = &addition;
+    addition->parent = &current;
   }
 
-  Iterator first() const{
-    Node current = head;
-    while(current->left != NULL){
+  balance(current);
+}
+
+void remove(const Key& key){
+  if(head == NULL){
+    throw isEmpty();
+  }
+  //makes sure the key exists
+  find(key);
+
+  //find the node that is to be removed
+  Node* current = head;
+  while(current->key != key){
+    if(current->key > key){
       current = current->left;
     }
-    Iterator it(current);
-    return it;
-  }
-
-  Iterator last() const{
-    Node current = head;
-    while(current->right != NULL){
-      current = current->right;
+    else{
+      current = current->right; 
     }
-    return Iterator(current);
   }
 
-  Iterator end() const{
-    return Iterator(NULL);
+  //middle of tree
+  if(current->left != NULL && current->right != NULL){
+    Node* next = current->right;
+    while(next->left != NULL){
+      next = next->left;
+    }
+    Key tempKey = next->key;
+    next->key = current->key;
+    current->key = tempKey;
+    Value tempValue = next->value;
+    next->value = current->value;
+    current->value = tempValue;
+    current = next;
   }
+  //no sons
+  Node* parent = current->parent;
+  if(current->left == NULL && current->right == NULL){
+    if(parent->left == current){
+      parent->left = NULL;
+    }
+    else{
+      parent->right = NULL;
+    }
+    delete current;
+  }
+
+  //one son
+  if(current->left == NULL && current->right != NULL){
+    if(parent->left == current){
+      parent->left = current->right;
+    }
+    else{
+      parent->right = current->right;
+    }
+  }
+  if(current->left != NULL && current->right == NULL){
+    if(parent->left == current){
+      parent->left = current->left;
+    }
+    else{
+      parent->right = current->left;
+    }
+  }
+
+  balance(parent);
+}
+
+Iterator first() const{
+  Node current = head;
+  while(current->left != NULL){
+    current = current->left;
+  }
+  Iterator it(current);
+  return it;
+}
+
+Iterator last() const{
+  Node current = head;
+  while(current->right != NULL){
+    current = current->right;
+  }
+  return Iterator(current);
+}
+
+Iterator end() const{
+  return Iterator(NULL);
+}
 
 };
 #endif
