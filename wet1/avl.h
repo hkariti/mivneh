@@ -109,9 +109,10 @@ public:
   Node* head;
 
   AVLTree(const AVLTree& tree);
-  static void rollRR(Node* top) {
+  void rollRR(Node* top) {
     Node* second = top->right;
     top->right = second->left;
+    second->left = top;
     second->parent = top-> parent;
 
     // update parent of the top node
@@ -123,6 +124,9 @@ public:
         (top->parent)->left = second;
       }
     }
+    else {
+	this->head = second;
+    }
     top->parent = second;
 
     //update tree hight and BF
@@ -130,7 +134,7 @@ public:
     updateHightAndBF(second);
   }
 
-  static void rollLL(Node* top) {
+  void rollLL(Node* top) {
     Node* second = top->left;
     top->left = second->right;
     second->parent = top->parent;
@@ -151,11 +155,11 @@ public:
     updateHightAndBF(second);
   }
 
-  static void rollRL(Node* top) {
+  void rollRL(Node* top) {
     rollLL(top->right);
     rollRR(top);
   }
-  static void rollLR(Node* top) {
+  void rollLR(Node* top) {
     rollRR(top->left);
     rollLL(top);
   }
@@ -167,13 +171,13 @@ public:
       newLeftHight = 0;
     }
     else{
-      newLeftHight = (top->left)->hight + 1;
+      newLeftHight = (top->left)->hight;
     }
     if(top->right == NULL) {
       newRightHight = 0;
     }
     else{
-      newRightHight = (top->right)->hight + 1;
+      newRightHight = (top->right)->hight;
     }
     if(newRightHight > newLeftHight) {
       top->hight = newRightHight + 1;
@@ -187,7 +191,7 @@ public:
   }
 
   //can only receive a node that has a two sons
-  static void balance(Node* current) {
+  void balance(Node* current) {
     while(current != NULL) {
       updateHightAndBF(current);
       if(current->BF == 2) {
@@ -288,7 +292,7 @@ void insert(const Key& key, const Value& value)
   }
   Node* current = head;
   while(*(current->key) != key) {
-    if(*(current->key) > key) {
+    if(*(current->key) < key) {
       if(current->right == NULL) {
         break;
       }
