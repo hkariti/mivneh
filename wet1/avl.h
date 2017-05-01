@@ -19,21 +19,69 @@ public:
     Node* current;
 
   public:
-    Value& operator*() const;
-    Iterator operator++();
-    Iterator operator--();
-    bool operator==(const Iterator& second) const;
-    bool operator!=(const Iterator& second) const;
-    void repalceWith(const Key& key, const Value& value);
-    Iterator left() const;
-    Iterator right() const;
-    Value& value() const;
+    Iterator(Node* node) : current(node) {};
+    Key& operator*() const {
+      return *(current->key);
+    };
+    Iterator& operator++() {
+      Iterator copy(this);
+      if (current->right != NULL) {
+        current = current->right;
+      } else {
+        Node* previous = current;
+        current = current->parent;
+        while (current->right == previous) {
+          previous = current;
+          current = current->parent;
+          if (current == NULL) break;
+        }
+      }
+      return copy;
+    }
+    Iterator& operator--() {
+      Iterator copy(this);
+      if (current->left != NULL) {
+        current = current->left;
+      } else {
+        Node* previous = current;
+        current = current->parent;
+        while (current->left == previous) {
+          previous = current;
+          current = current->parent;
+          if (current == NULL) break;
+        }
+      }
+      return copy;
+    }
+    bool operator==(const Iterator& second) const {
+      return current == second.current;
+    }
+    bool operator!=(const Iterator& second) const {
+      return !(this == second);
+    }
+    Value& value() const {
+      return *(current->value);
+    }
+    Iterator left() const {
+      return Iterator(current->left);
+    }
+    Iterator right() const {
+      return Iterator(current->right);
+    }
+    void repalceWith(const Key& key, const Value& value) {
+      current->key = key;
+      current->value = value;
+    }
   };
 
 private:
   class Node {
   public:
     friend void Iterator::repalceWith(const Key& key, const Value& value);
+    ~Node() {
+      delete left;
+      delete right;
+    }
     Key* key;
     Value* value;
     Node* parent;
@@ -240,8 +288,27 @@ private:
   }
 
   //debug functions
-  bool checkBF() const;
-  bool checkOrder() const;
+  void checkBF(Node* base) const {
+    if (base->BF > 1 || base->BF < -1) {
+      std::cout << "OH NOES! " << base->key << " has BF of " << base->BF << std::endl;
+      throw std::exception(base->key);
+    }
+
+    checkBF(base->left);
+    checkBF(base->right);
+  }
+
+  void checkOrder() const {
+    Iterator it(first());
+    Key previous = *it;
+    it++;
+    for (Key current=*it; it != end(); it++) {
+      if (current < previous) {
+        std::cout << "OH NOES! " << current << " < " << previous << " but is sorted as >!" << std::endl;
+        throw std::exception(std::pair<Key, Key>(current, previous));
+      }
+    }
+  }
 
 public:
   AVLTree(){
