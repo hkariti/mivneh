@@ -93,7 +93,7 @@ private:
     int hight;
 
 
-    Node(const Key& key, const Value& value, const Node* parent=NULL): key(key), value(value), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent){};
+    Node(const Key& key, const Value& value, const Node* parent=NULL): key(key), value(value), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent) {};
   };
 
   class NotFound : public std::exception {};
@@ -103,14 +103,14 @@ private:
   Node* head;
 
   AVLTree(const AVLTree& tree);
-  static void rollRR(Node* top){
+  static void rollRR(Node* top) {
     Node* second = top->right;
     top->right = second->left;
     second->parent = top-> parent;
 
     // update parent of the top node
-    if(top->parent != NULL){
-      if((top->parent)->right == top){
+    if(top->parent != NULL) {
+      if((top->parent)->right == top) {
         (top->parent)->right = second;
       }
       else{
@@ -124,14 +124,14 @@ private:
     updateHightAndBF(second);
   }
 
-  static void rollLL(Node* top){
+  static void rollLL(Node* top) {
     Node* second = top->left;
     top->left = second->right;
     second->parent = top->parent;
 
     // update parent of the top node
-    if(top->parent != NULL){
-      if((top->parent)->right == top){
+    if(top->parent != NULL) {
+      if((top->parent)->right == top) {
         (top->parent)->right = second;
       }
       else{
@@ -145,31 +145,31 @@ private:
     updateHightAndBF(second);
   }
 
-  static void rollRL(Node* top){
+  static void rollRL(Node* top) {
     rollLL(top->right);
     rollRR(top);
   }
-  static void rollLR(Node* top){
+  static void rollLR(Node* top) {
     rollRR(top->left);
     rollLL(top);
   }
 
-  static void updateHightAndBF(Node* top){
+  static void updateHightAndBF(Node* top) {
     int newLeftHight;
     int newRightHight;
-    if(top->left == NULL){
+    if(top->left == NULL) {
       newLeftHight = 0;
     }
     else{
-      newLeftHight = (top->left)->hight;
+      newLeftHight = (top->left)->hight + 1;
     }
-    if(top->right == NULL){
+    if(top->right == NULL) {
       newRightHight = 0;
     }
     else{
-      newRightHight = (top->right)->hight;
+      newRightHight = (top->right)->hight + 1;
     }
-    if(newRightHight > newLeftHight){
+    if(newRightHight > newLeftHight) {
       top->hight = newRightHight + 1;
     }
     else{
@@ -181,26 +181,22 @@ private:
   }
 
   //can only receive a node that has a two sons
-  static void balance(Node* current){
-    while(current != NULL){
+  static void balance(Node* current) {
+    while(current != NULL) {
       updateHightAndBF(current);
-      if(current->BF == 2){
-        if((current->left)->BF == -1){
+      if(current->BF == 2) {
+        if((current->left)->BF == -1) {
           rollLR(current);
         }
-      }
-      if(current->BF == 2){
-        if((current->left)->BF >= 0){
+        else {
           rollLL(current);
         }
       }
-      if(current->BF == -2){
-        if((current->right)->BF <= 0){
+      if(current->BF == -2) {
+        if((current->right)->BF <= 0) {
           rollRR(current);
         }
-      }
-      if(current->BF == -2){
-        if((current->right)->BF == 1){
+        else {
           rollRL(current);
         }
       }
@@ -232,18 +228,18 @@ private:
   }
 
 public:
-AVLTree(){
+AVLTree() {
   head = NULL;
 }
 ~AVLTree();
 
 Value& find(const Key& key) const{// may not be const
   Iterator it = first();
-  while(it != end()){
-    if(key > *it){
+  while(it != end()) {
+    if(key > *it) {
       it = it.right();
     }
-    if(key < *it){
+    if(key < *it) {
       it = it.left;
     }
     return it.value;
@@ -255,37 +251,35 @@ Value& find(const Key& key) const{// may not be const
 
 void insert(const Key& key, const Value& value)
 {
-  if(head == NULL){
+  if(head == NULL) {
     head = new Node(key, value);
     return;
   }
   Node* current = head;
-  while(current->key != key){
-    if(current->key > key){
-      if(current->right == NULL){
+  while(current->key != key) {
+    if(current->key > key) {
+      if(current->right == NULL) {
         break;
       }
       current = current->right;
-      continue;
     }
     else{
-      if(current->left == NULL){
+      if(current->left == NULL) {
         break;
       }
       current = current->left;
-      continue;
     }
   }
-  if(current->key == key){
+  if(current->key == key) {
     throw AlreadyThere();
   }
 
-  if(current->left == NULL && current->key > key){
+  if(current->left == NULL && current->key > key) {
     Node addition = new Node(key, value);
     current->left = &addition;
     addition->parent = &current;
   }
-  if(current->right == NULL && current->key < key){
+  if(current->right == NULL && current->key < key) {
     Node addition = new Node(key, value);
     current->right = &addition;
     addition->parent = &current;
@@ -294,8 +288,8 @@ void insert(const Key& key, const Value& value)
   balance(current);
 }
 
-void remove(const Key& key){
-  if(head == NULL){
+void remove(const Key& key) {
+  if(head == NULL) {
     throw isEmpty();
   }
   //makes sure the key exists
@@ -303,8 +297,8 @@ void remove(const Key& key){
 
   //find the node that is to be removed
   Node* current = head;
-  while(current->key != key){
-    if(current->key > key){
+  while(current->key != key) {
+    if(current->key > key) {
       current = current->left;
     }
     else{
@@ -312,12 +306,16 @@ void remove(const Key& key){
     }
   }
 
-  //middle of tree
-  if(current->left != NULL && current->right != NULL){
+  // Node to be removed has two sons.
+  // We switch it with the next node according to in-order,
+  // then handle it like a node with zero or one sons
+  if(current->left != NULL && current->right != NULL) {
     Node* next = current->right;
-    while(next->left != NULL){
+    // Find the next node
+    while(next->left != NULL) {
       next = next->left;
     }
+    // Switch
     Key tempKey = next->key;
     next->key = current->key;
     current->key = tempKey;
@@ -326,29 +324,29 @@ void remove(const Key& key){
     current->value = tempValue;
     current = next;
   }
-  //no sons
+
+  // Node has zero or one sons (or was made to be like that previously)
   Node* parent = current->parent;
-  if(current->left == NULL && current->right == NULL){
-    if(parent->left == current){
+  // Zero sons
+  if(current->left == NULL && current->right == NULL) {
+    if(parent->left == current) {
       parent->left = NULL;
     }
     else{
       parent->right = NULL;
     }
-    delete current;
   }
-
-  //one son
-  if(current->left == NULL && current->right != NULL){
-    if(parent->left == current){
+  // One son
+  else if(current->left == NULL && current->right != NULL) {
+    if(parent->left == current) {
       parent->left = current->right;
     }
     else{
       parent->right = current->right;
     }
   }
-  if(current->left != NULL && current->right == NULL){
-    if(parent->left == current){
+  else if(current->left != NULL && current->right == NULL) {
+    if(parent->left == current) {
       parent->left = current->left;
     }
     else{
@@ -356,12 +354,13 @@ void remove(const Key& key){
     }
   }
 
+  delete current;
   balance(parent);
 }
 
 Iterator first() const{
   Node current = head;
-  while(current->left != NULL){
+  while(current->left != NULL) {
     current = current->left;
   }
   Iterator it(current);
@@ -370,7 +369,7 @@ Iterator first() const{
 
 Iterator last() const{
   Node current = head;
-  while(current->right != NULL){
+  while(current->right != NULL) {
     current = current->right;
   }
   return Iterator(current);
