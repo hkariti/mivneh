@@ -251,18 +251,18 @@ AVLTree() {
     std::cout << *(node->key) << " ";
     printInOrder(node->right);
   }
-  void printPostOrder(const Node* node) const {
+  void printPreOrder(const Node* node) const {
     if (!node) return;;
-    printPostOrder(node->left);
-    printPostOrder(node->right);
     std::cout << *(node->key) << " ";
+    printPreOrder(node->left);
+    printPreOrder(node->right);
   }
   void print() const {
     std::cout << "in-order:" << std::endl;
     printInOrder(head);
     std::cout << std::endl;
-    std::cout << "post-order:" << std::endl;
-    printPostOrder(head);
+    std::cout << "pre-order:" << std::endl;
+    printPreOrder(head);
     std::cout << std::endl;
   }
 
