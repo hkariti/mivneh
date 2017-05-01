@@ -2,6 +2,7 @@
 #define AVL_H
 
 #include <iostream>
+#include <exception>
 
 
 template <class Key, class Value>
@@ -78,7 +79,10 @@ private:
   class Node {
   private:
     friend void Iterator::repalceWith(const Key& key, const Value& value);
-    ~Node();
+    ~Node() {
+      delete left;
+      delete right;
+    }
     Key* key;
     Value* value;
     Node* parent;
@@ -102,8 +106,27 @@ private:
   static void balance();
 
   //debug functions
-  bool checkBF() const;
-  bool checkOrder() const;
+  void checkBF(Node* base) const {
+    if (base->BF > 1 || base->BF < -1) {
+      std::cout << "OH NOES! " << base->key << " has BF of " << base->BF << std::endl;
+      throw std::exception(base->key);
+    }
+
+    checkBF(base->left);
+    checkBF(base->right);
+  }
+
+  void checkOrder() const {
+    Iterator it(first());
+    Key previous = *it;
+    it++;
+    for (Key current=*it; it != end(); it++) {
+      if (current < previous) {
+        std::cout << "OH NOES! " << current << " < " << previous << " but is sorted as >!" << std::endl;
+        throw std::exception(std::pair<Key, Key>(current, previous));
+      }
+    }
+  }
 
 public:
   AVLTree();
