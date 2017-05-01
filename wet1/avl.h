@@ -19,18 +19,18 @@ public:
     Node* current;
 
   public:
-    Value& operator*();
+    Value& operator*() const;
     Iterator operator++();
     Iterator operator--();
-    bool operator==(Iterator& second);
-    bool operator!=(Iterator& second);
-    void repalceWith(Key& key, Value& value);
+    bool operator==(const Iterator& second) const;
+    bool operator!=(const Iterator& second) const;
+    void repalceWith(const Key& key, const Value& value);
   };
 
 private:
   class Node {
   private:
-    friend void Iterator::repalceWith(Key& key, Value& value);
+    friend void Iterator::repalceWith(const Key& key, const Value& value);
     Key* key;
     Value* value;
     Node* parent;
@@ -41,12 +41,12 @@ private:
     int hightLeft;
   public:
 
-    Node(Key& key, Value& value, Node* parent=NULL): key(key), value(value), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent){};
+    Node(const Key& key, const Value& value, const Node* parent=NULL): key(key), value(value), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent){};
   };
 
   Node head;
 
-  AVLTree(AVLTree& tree);
+  AVLTree(const AVLTree& tree);
   static void rollRR();
   static void rollLL();
   static void rollRL();
@@ -54,22 +54,21 @@ private:
   static void balance();
 
   //debug functions
-  static bool checkBF();
-  static bool checkOrder();
+  bool checkBF() const;
+  bool checkOrder() const;
 
 public:
   AVLTree();
   ~AVLTree();
 
+  Value& find(const Key& key) const; // may not be const
 
-  Value& find(Key key);
+  void insert(const Key& key, const Value& value);
+  void remove(const Key& key, const Value& value);
 
-  void insert(Key& key, Value& value);
-  void remove(Key& key, Value& value);
-
-  Iterator first();
-  Iterator last();
-  Iterator end();
+  Iterator first() const;
+  Iterator last() const;
+  Iterator end() const;
 
 };
 #endif
