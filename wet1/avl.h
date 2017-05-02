@@ -113,8 +113,11 @@ public:
   void rollRR(Node* top) {
     Node* second = top->right;
     top->right = second->left;
+    if (top->right) {
+      top->right->parent = top;
+    }
     second->left = top;
-    second->parent = top-> parent;
+    second->parent = top->parent;
 
     // update parent of the top node
     if(top->parent != NULL) {
@@ -138,6 +141,9 @@ public:
   void rollLL(Node* top) {
     Node* second = top->left;
     top->left = second->right;
+    if (top->left) {
+      top->left->parent = top;
+    }
     second->right = top;
     second->parent = top->parent;
 
