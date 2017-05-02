@@ -77,6 +77,22 @@ void AVLTreeRollTest(){
   std::cout << "removing 4" << std::endl;
   tree.remove(4);
   treeSanity(tree);
+
+  std::cout << "re-inserting 4" << std::endl;
+  tree.insert(4,4);
+  treeSanity(tree);
+
+  std::cout << "re-inserting 1 incorrectly" << std::endl;
+  try{
+    tree.insert(1,1); 
+  }
+  catch(std::exception& e){
+    std::cout << "successfully blocked" << std::endl;
+  }
+
+  std::cout << "removing 1" << std::endl;
+  tree.remove(1);
+  treeSanity(tree);
 }
 
 int main(){

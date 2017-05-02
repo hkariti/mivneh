@@ -277,15 +277,20 @@ public:
   }
 
   Value& find(const Key& key) const{// may not be const
-    Iterator it = first();
+    Iterator it = root();
     while(it != end()) {
+      if(key == *it){
+        return it.value();
+      }
       if(key > *it) {
         it = it.right();
       }
-      if(key < *it) {
+      else if(key < *it) {
         it = it.left();
       }
-      return it.value();
+      else {
+        return it.value();
+      }
     }
     throw NotFound();
   }
@@ -338,12 +343,7 @@ public:
       throw isEmpty();
     }
     //makes sure the key exists
-    try{
       this->find(key);
-    }
-    catch(std::exception& e){
-      std::cout << "not finding" << std::endl;
-    }
 
     //find the node that is to be removed
     Node* current = head;
@@ -355,7 +355,7 @@ public:
         current = current->right;
       }
     }
-    std::cout << "done searching" << std::endl;
+    std::cout << "done searching, key is " << *(current->key) << std::endl;
     // Node to be removed has two sons.
     // We switch it with the next node according to in-order,
     // then handle it like a node with zero or one sons
@@ -406,18 +406,27 @@ public:
         std::cout << "only right son" << std::endl;
         if(parent->left == current) {
           parent->left = current->right;
+          parent->left->parent = parent;
+          current->right = NULL;
         }
         else{
           parent->right = current->right;
+          parent->right->parent = parent;
+          current->right = NULL;
         }
       }
       else if(current->left != NULL && current->right == NULL) {
         std::cout << "only left son" << std::endl;
         if(parent->left == current) {
           parent->left = current->left;
+          current->left = NULL;
+          parent->left->parent = parent;
         }
         else{
+          std::cout << "is the parents right son" << std::endl;
           parent->right = current->left;
+          current->left = NULL;
+          parent->right->parent = parent;
         }
       }
     }
