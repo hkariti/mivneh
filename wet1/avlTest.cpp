@@ -8,7 +8,7 @@ void treeSanity(AVLTree<int, int>& tree) {
 }
 
 void AVLTreeRollTest(){
-  //rolll RR test
+  /*//rolll RR test
   AVLTree<int, int> tree;
   tree.insert(1,2);
   tree.insert(5,6);
@@ -49,7 +49,34 @@ void AVLTreeRollTest(){
   treeSanity(tree);
   treeSanity(tree2);
   treeSanity(tree3);
-  treeSanity(tree4);
+  treeSanity(tree4);*/
+
+  AVLTree<int, int> tree;
+  tree.insert(2,2);
+  tree.insert(1,1);
+  tree.insert(3,3);
+  tree.insert(4,4);
+  treeSanity(tree);
+
+  std::cout << "removing 1" << std::endl;
+  tree.remove(1);
+  treeSanity(tree);
+
+  std::cout << "re-inserrting 1" << std::endl;
+  tree.insert(1,1);
+  treeSanity(tree);
+
+  std::cout << "removing 2" << std::endl;
+  tree.remove(2);
+  treeSanity(tree);
+
+  std::cout << "re-inserting 0" << std::endl;
+  tree.insert(0,0);
+  treeSanity(tree);
+
+  std::cout << "removing 4" << std::endl;
+  tree.remove(4);
+  treeSanity(tree);
 }
 
 int main(){

@@ -283,9 +283,9 @@ public:
         it = it.right();
       }
       if(key < *it) {
-        it = it.left;
+        it = it.left();
       }
-      return it.value;
+      return it.value();
     }
     throw NotFound();
   }
@@ -338,33 +338,39 @@ public:
       throw isEmpty();
     }
     //makes sure the key exists
-    find(key);
+    try{
+      this->find(key);
+    }
+    catch(std::exception& e){
+      std::cout << "not finding" << std::endl;
+    }
 
     //find the node that is to be removed
     Node* current = head;
-    while(current->key != key) {
-      if(current->key > key) {
+    while(*(current->key) != key) {
+      if(*(current->key) > key) {
         current = current->left;
       }
       else{
         current = current->right;
       }
     }
-
+    std::cout << "done searching" << std::endl;
     // Node to be removed has two sons.
     // We switch it with the next node according to in-order,
     // then handle it like a node with zero or one sons
     if(current->left != NULL && current->right != NULL) {
+      std::cout << "2 sons" << std::endl;
       Node* next = current->right;
       // Find the next node
       while(next->left != NULL) {
         next = next->left;
       }
       // Switch
-      Key tempKey = next->key;
+      Key* tempKey = next->key;
       next->key = current->key;
       current->key = tempKey;
-      Value tempValue = next->value;
+      Value* tempValue = next->value;
       next->value = current->value;
       current->value = tempValue;
       current = next;
@@ -373,6 +379,7 @@ public:
     // Node has zero or one sons (or was made to be like that previously)
     Node* parent = current->parent;
     if(parent == NULL) {
+      std::cout << "is head of tree" << std::endl;
       if(current->left == NULL && current->right == NULL){
         head = NULL;
       }
@@ -386,6 +393,7 @@ public:
     else{
       // Zero sons
       if(current->left == NULL && current->right == NULL) {
+        std::cout << "zero sons" << std::endl;
         if(parent->left == current) {
           parent->left = NULL;
         }
@@ -395,6 +403,7 @@ public:
       }
       // One son
       else if(current->left == NULL && current->right != NULL) {
+        std::cout << "only right son" << std::endl;
         if(parent->left == current) {
           parent->left = current->right;
         }
@@ -403,6 +412,7 @@ public:
         }
       }
       else if(current->left != NULL && current->right == NULL) {
+        std::cout << "only left son" << std::endl;
         if(parent->left == current) {
           parent->left = current->left;
         }
