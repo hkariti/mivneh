@@ -1,10 +1,12 @@
 #include "avl.h"
 
-void treeSanity(AVLTree<int, int>& tree) {
+template <typename T>
+void treeSanity(AVLTree<T, int>& tree) {
   std::cout << "Sanity" << std::endl;
   tree.print();
   tree.checkOrder();
   tree.checkBF();
+  tree.checkParents();
 }
 
 void AVLTreeRollTest(){
@@ -95,8 +97,51 @@ void AVLTreeRollTest(){
   treeSanity(tree);
 }
 
+void AVLBigTree() {
+    AVLTree<float, int> tree;
+    tree.insert(1, 0);
+    tree.insert(2, 0);
+    tree.insert(5, 0);
+    tree.insert(8, 0);
+    tree.insert(7, 0);
+    // BF is for root is -1 now
+
+    tree.insert(10, 0); // BF is now -2, child is -1 - RR roll
+
+    tree.insert(4,0);
+    tree.insert(0,0);
+    tree.insert(6,0);
+    tree.insert(3, 0); // LR roll
+
+    tree.insert(5.5, 0);
+    tree.insert(6.5, 0);
+    tree.insert(5.6, 0);
+    tree.insert(5.4, 0);
+    tree.insert(5.3, 0); // LL roll
+
+    tree.insert(1.1, 0);
+    tree.insert(-1, 0);
+    tree.insert(7.5, 0);
+    tree.insert(9, 0);
+    tree.insert(7.1, 0);
+    tree.insert(7.9, 0);
+    tree.insert(13, 0);
+    tree.insert(7.3, 0);
+    tree.insert(7.7, 0);
+    tree.insert(8.9, 0);
+    tree.insert(7.01, 0);
+    tree.insert(7.2, 0); // RL roll
+
+    // output of print should be:
+    // in-order:
+    // -1 0 1 1.1 2 3 4 5 5.3 5.4 5.5 5.6 6 6.5 7 7.01 7.1 7.2 7.3 7.5 7.7 7.9 8 8.9 9 10 13
+    // pre-order:
+    // 5 2 1 0 -1 1.1 4 3 7.5 7 5.5 5.4 5.3 6 5.6 6.5 7.1 7.01 7.3 7.2 8 7.9 7.7 10 9 8.9 13
+    treeSanity(tree);
+}
 int main(){
  AVLTreeRollTest();
+ AVLBigTree();
 
  return 0;
 }
