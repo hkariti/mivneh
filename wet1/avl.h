@@ -252,6 +252,18 @@ public:
       }
     }
   }
+  void checkParentsRecurse(Node* current, Node* parent) const {
+    if (!current) return;
+    if (current->parent != parent) {
+      std::cout << "OH NOES! " << *current->key << " thinks its parent is " << ( current->parent ? *current->parent->key : -1000 ) << " but it's actually " << ( parent ? *parent->key : -1000) << std::endl;
+      throw DebugException();
+    }
+    checkParentsRecurse(current->left, current);
+    checkParentsRecurse(current->right, current);
+  }
+  void checkParents() const {
+    checkParentsRecurse(head, NULL);
+  }
 
 public:
   AVLTree() {
