@@ -126,7 +126,7 @@ public:
       }
     }
     else {
-	this->head = second;
+      this->head = second;
     }
     top->parent = second;
 
@@ -248,9 +248,9 @@ public:
   }
 
 public:
-AVLTree() {
-  head = NULL;
-}
+  AVLTree() {
+    head = NULL;
+  }
   ~AVLTree(){
     delete head;
   }
@@ -276,157 +276,169 @@ AVLTree() {
     std::cout << std::endl;
   }
 
-Value& find(const Key& key) const{// may not be const
-  Iterator it = first();
-  while(it != end()) {
-    if(key > *it) {
-      it = it.right();
-    }
-    if(key < *it) {
-      it = it.left;
-    }
-    return it.value;
-  }
-  throw NotFound();
-}
-
-
-
-void insert(const Key& key, const Value& value)
-{
-  std::cout << "inserting key " << key << " value " << value << std::endl;
-  if(head == NULL) {
-    Node* node = new Node(key, value);
-    head = node;
-    return;
-  }
-  Node* current = head;
-  while(*(current->key) != key) {
-    if(*(current->key) < key) {
-      if(current->right == NULL) {
-        break;
+  Value& find(const Key& key) const{// may not be const
+    Iterator it = first();
+    while(it != end()) {
+      if(key > *it) {
+        it = it.right();
       }
-      current = current->right;
-    }
-    else{
-      if(current->left == NULL) {
-        break;
+      if(key < *it) {
+        it = it.left;
       }
-      current = current->left;
+      return it.value;
     }
-  }
-  if(*(current->key) == key) {
-    throw AlreadyThere();
+    throw NotFound();
   }
 
-  if(current->left == NULL && *(current->key) > key) {
-    Node* addition = new Node(key, value);
-    current->left = addition;
-    addition->parent = current;
-  }
-  if(current->right == NULL && *(current->key) < key) {
-    Node* addition = new Node(key, value);
-    current->right = addition;
-    addition->parent = current;
+
+
+  void insert(const Key& key, const Value& value)
+  {
+    std::cout << "inserting key " << key << " value " << value << std::endl;
+    if(head == NULL) {
+      Node* node = new Node(key, value);
+      head = node;
+      return;
+    }
+    Node* current = head;
+    while(*(current->key) != key) {
+      if(*(current->key) < key) {
+        if(current->right == NULL) {
+          break;
+        }
+        current = current->right;
+      }
+      else{
+        if(current->left == NULL) {
+          break;
+        }
+        current = current->left;
+      }
+    }
+    if(*(current->key) == key) {
+      throw AlreadyThere();
+    }
+
+    if(current->left == NULL && *(current->key) > key) {
+      Node* addition = new Node(key, value);
+      current->left = addition;
+      addition->parent = current;
+    }
+    if(current->right == NULL && *(current->key) < key) {
+      Node* addition = new Node(key, value);
+      current->right = addition;
+      addition->parent = current;
+    }
+
+    balance(current);
   }
 
-  balance(current);
-}
+  void remove(const Key& key) {
+    if(head == NULL) {
+      throw isEmpty();
+    }
+    //makes sure the key exists
+    find(key);
 
-void remove(const Key& key) {
-  if(head == NULL) {
-    throw isEmpty();
-  }
-  //makes sure the key exists
-  find(key);
+    //find the node that is to be removed
+    Node* current = head;
+    while(current->key != key) {
+      if(current->key > key) {
+        current = current->left;
+      }
+      else{
+        current = current->right;
+      }
+    }
 
-  //find the node that is to be removed
-  Node* current = head;
-  while(current->key != key) {
-    if(current->key > key) {
-      current = current->left;
+    // Node to be removed has two sons.
+    // We switch it with the next node according to in-order,
+    // then handle it like a node with zero or one sons
+    if(current->left != NULL && current->right != NULL) {
+      Node* next = current->right;
+      // Find the next node
+      while(next->left != NULL) {
+        next = next->left;
+      }
+      // Switch
+      Key tempKey = next->key;
+      next->key = current->key;
+      current->key = tempKey;
+      Value tempValue = next->value;
+      next->value = current->value;
+      current->value = tempValue;
+      current = next;
+    }
+
+    // Node has zero or one sons (or was made to be like that previously)
+    Node* parent = current->parent;
+    if(parent == NULL) {
+      if(current->left == NULL && current->right == NULL){
+        head = NULL;
+      }
+      else if(current->left == NULL && current->right != NULL){
+        head = current->right;
+      }
+      else{
+        head = current->left;
+      }
     }
     else{
-      current = current->right; 
+      // Zero sons
+      if(current->left == NULL && current->right == NULL) {
+        if(parent->left == current) {
+          parent->left = NULL;
+        }
+        else{
+          parent->right = NULL;
+        }
+      }
+      // One son
+      else if(current->left == NULL && current->right != NULL) {
+        if(parent->left == current) {
+          parent->left = current->right;
+        }
+        else{
+          parent->right = current->right;
+        }
+      }
+      else if(current->left != NULL && current->right == NULL) {
+        if(parent->left == current) {
+          parent->left = current->left;
+        }
+        else{
+          parent->right = current->left;
+        }
+      }
     }
+    delete current;
+    balance(parent);
   }
-
-  // Node to be removed has two sons.
-  // We switch it with the next node according to in-order,
-  // then handle it like a node with zero or one sons
-  if(current->left != NULL && current->right != NULL) {
-    Node* next = current->right;
-    // Find the next node
-    while(next->left != NULL) {
-      next = next->left;
-    }
-    // Switch
-    Key tempKey = next->key;
-    next->key = current->key;
-    current->key = tempKey;
-    Value tempValue = next->value;
-    next->value = current->value;
-    current->value = tempValue;
-    current = next;
-  }
-
-  // Node has zero or one sons (or was made to be like that previously)
-  Node* parent = current->parent;
-  // Zero sons
-  if(current->left == NULL && current->right == NULL) {
-    if(parent->left == current) {
-      parent->left = NULL;
-    }
-    else{
-      parent->right = NULL;
-    }
-  }
-  // One son
-  else if(current->left == NULL && current->right != NULL) {
-    if(parent->left == current) {
-      parent->left = current->right;
-    }
-    else{
-      parent->right = current->right;
-    }
-  }
-  else if(current->left != NULL && current->right == NULL) {
-    if(parent->left == current) {
-      parent->left = current->left;
-    }
-    else{
-      parent->right = current->left;
-    }
-  }
-
-  delete current;
-  balance(parent);
-}
 
   Iterator root() const{
     return Iterator(head);
   }
 
-Iterator first() const{
-  Node* current = head;
-  while(current->left != NULL) {
-    current = current->left;
+  Iterator first() const{
+    Node* current = head;
+    while(current->left != NULL) {
+      current = current->left;
+    }
+    Iterator it(current);
+    return it;
   }
-  Iterator it(current);
-  return it;
-}
 
-Iterator last() const{
-  Node* current = head;
-  while(current->right != NULL) {
-    current = current->right;
+  Iterator last() const{
+    Node* current = head;
+    while(current->right != NULL) {
+      current = current->right;
+    }
+    return Iterator(current);
   }
-  return Iterator(current);
-}
 
-Iterator end() const{
-  return Iterator(NULL);
-}
+  Iterator end() const{
+    return Iterator(NULL);
+  }
 
 };
 #endif
