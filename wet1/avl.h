@@ -113,8 +113,11 @@ public:
   void rollRR(Node* top) {
     Node* second = top->right;
     top->right = second->left;
+    if (top->right) {
+      top->right->parent = top;
+    }
     second->left = top;
-    second->parent = top-> parent;
+    second->parent = top->parent;
 
     // update parent of the top node
     if(top->parent != NULL) {
@@ -138,6 +141,9 @@ public:
   void rollLL(Node* top) {
     Node* second = top->left;
     top->left = second->right;
+    if (top->left) {
+      top->left->parent = top;
+    }
     second->right = top;
     second->parent = top->parent;
 
@@ -245,6 +251,18 @@ public:
         throw DebugException();
       }
     }
+  }
+  void checkParentsRecurse(Node* current, Node* parent) const {
+    if (!current) return;
+    if (current->parent != parent) {
+      std::cout << "OH NOES! " << *current->key << " thinks its parent is " << ( current->parent ? *current->parent->key : -1000 ) << " but it's actually " << ( parent ? *parent->key : -1000) << std::endl;
+      throw DebugException();
+    }
+    checkParentsRecurse(current->left, current);
+    checkParentsRecurse(current->right, current);
+  }
+  void checkParents() const {
+    checkParentsRecurse(head, NULL);
   }
 
 public:
