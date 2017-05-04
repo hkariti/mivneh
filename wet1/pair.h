@@ -29,7 +29,7 @@ public:
       return true;
     }
     else if(this->power == pair.power){
-      if(this->id > pair.id){
+      if(this->id < pair.id){
         return true;
       }
     }
@@ -40,7 +40,7 @@ public:
       return true;
     }
     else if(this->power == pair.power){
-      if(this->id < pair.id){
+      if(this->id > pair.id){
         return true;
       }
     }

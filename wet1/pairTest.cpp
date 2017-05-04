@@ -13,16 +13,16 @@ PairTest(){
   if(second == first){
     std::cout << "ABORT (equal)" << std::endl;
   }
-  if(first > second){
+  if(first < second){
     std::cout << "ABORT (>)" << std::endl;
   }
-  if(second > first){
+  if(second < first){
     std::cout << "success (>)" << std::endl;
   }
-  if(first < second){
+  if(first > second) {
     std::cout << "success (<)" << std::endl;
   }
-  if(second < first){
+  if(second > first){
     std::cout << "ABORT (<)" << std::endl;
   }
 
