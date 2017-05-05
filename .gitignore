@@ -4,6 +4,7 @@
 *.clang_complete
 *.o
 *.a
+*.dSYM
 
 
 ## Emacs stuff
