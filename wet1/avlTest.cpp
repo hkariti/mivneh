@@ -138,6 +138,21 @@ void AVLBigTree() {
     // pre-order:
     // 5 2 1 0 -1 1.1 4 3 7.5 7 5.5 5.4 5.3 6 5.6 6.5 7.1 7.01 7.3 7.2 8 7.9 7.7 10 9 8.9 13
     treeSanity(tree);
+
+    //remove test
+
+    tree.remove(1.1);
+    treeSanity(tree);
+
+    try{
+      tree.remove(0.1);
+    }
+    catch (std::exception& e){
+      std::cout << "not removing what isnt there" << std::endl;
+    }
+
+    tree.remove(7.01);
+    treeSanity(tree);
 }
 int main(){
  AVLTreeRollTest();
