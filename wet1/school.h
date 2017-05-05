@@ -102,7 +102,7 @@ public:
   }
 
   StatusType getMostPowerful(int teamID, int* studentID){
-    if(teamID == 0) || studentID == NULL){
+    if(teamID == 0 || studentID == NULL){
       return INVALID_INPUT;
     }
 
