@@ -88,18 +88,20 @@ public:
       if(this->current == NULL) return Iterator(NULL);
       return Iterator(current->right);
     }
-
     //replaces the key and value of the node the iterator is pointing at with the supplied key and value
-    void repalceWith(const Key& key, const Value& value) {
-      current->key = key;
-      current->value = value;
+    void replaceWith(const Key& key, const Value& value) {
+      if (!current) throw EndOfTree();
+      delete current->key;
+      delete current->value;
+      this->current->key = new Key(key);
+      this->current->value = new Value(value);
     }
   };
 
   private:
   class Node {
     //allows the iterator replaceWith function to access the nodes private fields
-    friend void Iterator::repalceWith(const Key& key, const Value& value);
+    friend void Iterator::replaceWith(const Key& key, const Value& value);
 
   public:
     //d'tor that releases the node itself and all the nodes connected to it via left\right.
@@ -254,6 +256,7 @@ public:
 public:
   class NotFound : public std::exception {};
   class isEmpty : public std::exception {};
+  class EndOfTree : public std::exception {};
   class AlreadyThere : public std::exception {};
   class DebugException : public std::exception {};
   //debug functions
@@ -263,7 +266,6 @@ public:
     if (!base) return;
 
     if (base->BF > 1 || base->BF < -1) {
-      std::cout << "OH NOES! " << base->key << " has BF of " << base->BF << std::endl;
       throw DebugException();
     }
 
@@ -282,7 +284,6 @@ public:
     it++;
     for (Key current=*it; it != end(); it++) {
       if (current < previous) {
-        std::cout << "OH NOES! " << current << " < " << previous << " but is sorted as >!" << std::endl;
         throw DebugException();
       }
     }
@@ -292,7 +293,6 @@ public:
   void checkParentsRecurse(Node* current, Node* parent) const {
     if (!current) return;
     if (current->parent != parent) {
-      std::cout << "OH NOES! " << *current->key << " thinks its parent is " << ( current->parent ? *current->parent->key : -1000 ) << " but it's actually " << ( parent ? *parent->key : -1000) << std::endl;
       throw DebugException();
     }
     checkParentsRecurse(current->left, current);
@@ -314,24 +314,18 @@ public:
   void printInOrder(const Node* node) const {
     if (!node) return;;
     printInOrder(node->left);
-    std::cout << *(node->key) << " ";
     printInOrder(node->right);
   }
 
   // prints the tree according to preoder walk through
   void printPreOrder(const Node* node) const {
     if (!node) return;;
-    std::cout << *(node->key) << " ";
     printPreOrder(node->left);
     printPreOrder(node->right);
   }
   void print() const {
-    std::cout << "in-order:" << std::endl;
     printInOrder(head);
-    std::cout << std::endl;
-    std::cout << "pre-order:" << std::endl;
     printPreOrder(head);
-    std::cout << std::endl;
   }
 
   // finds a given key in the tree and returns its value. if the key does not exsist throws NotFound
@@ -417,7 +411,6 @@ public:
     // We switch it with the next node according to in-order,
     // then handle it like a node with zero or one sons
     if(current->left != NULL && current->right != NULL) {
-      std::cout << "2 sons" << std::endl;
       Node* next = current->right;
       // Find the next node
       while(next->left != NULL) {
