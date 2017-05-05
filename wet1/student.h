@@ -13,11 +13,11 @@ class Student{
 public:
   Student(const int& id, const int& grade, const int& power) : id(id), grade(grade), power(power) {}
   ~Student() {}
-  
-  const int& ID() const{
+
+  const int& getID() const{
     return this->id;
   }
-  const int& Grade() const{
+  const int& getGrade() const{
     return this->grade;
   }
   void updatePower(int addition) {
@@ -34,5 +34,4 @@ public:
   }
 
 };
-
 #endif
