@@ -10,6 +10,7 @@ class Team {
   int mostPowerfulStudentId;
   AVLTree<PowerIDPair, Student*> students;
 
+public:
   Team(int id) : id(id), mostPowerfulStudentId(-1), students() {}
 
   int getMostPowerfulStudent() {
