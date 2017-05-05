@@ -1,6 +1,7 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
+//#include "team.h"
 class Team;
 
 class Student{
@@ -25,7 +26,7 @@ public:
   const int& getPower() const{
     return power;
   }
-  const Team* getTeam() const{
+  Team* getTeam() const {
     return team;
   }
   void updateTeam(Team& newTeam) {
@@ -33,8 +34,5 @@ public:
   }
 
 };
-
-
-
 
 #endif
