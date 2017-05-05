@@ -1,6 +1,8 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
+class Team;
+
 class Student{
   int id;
   const int grade;
@@ -26,8 +28,8 @@ public:
   const Team* getTeam() const{
     return team;
   }
-  void updateTeam(const Team& newTeam) {
-    this->team = newTeam;
+  void updateTeam(Team& newTeam) {
+    this->team = &newTeam;
   }
 
 };
