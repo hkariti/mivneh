@@ -34,13 +34,14 @@ public:
       Iterator copy(this->current);
       if (current->right != NULL) {
         current = current->right;
+        while (current->left != NULL)
+            current = current->left;
       } else {
         Node* previous = current;
         current = current->parent;
-        while (current->right == previous) {
+        while (current != NULL && current->right == previous) {
           previous = current;
           current = current->parent;
-          if (current == NULL) break;
         }
       }
       return copy;
@@ -51,13 +52,14 @@ public:
       Iterator copy(this->current);
       if (current->left != NULL) {
         current = current->left;
+        while (current->right != NULL)
+            current = current->right;
       } else {
         Node* previous = current;
         current = current->parent;
-        while (current->left == previous) {
+        while (current != NULL && current->left == previous) {
           previous = current;
           current = current->parent;
-          if (current == NULL) break;
         }
       }
       return copy;
