@@ -24,10 +24,13 @@ public:
     }
 
     //add student to student tree
+    Student* stud;
     try{
-      students.insert(studentID, new Student(studentID, grade, power));
+      stud = new Student(studentID, grade, power);
+    students.insert(studentID, stud);
     }
     catch(idTree::AlreadyThere& e){
+      delete stud;
       return FAILURE;
     }
     catch(std::bad_alloc& e){

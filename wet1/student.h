@@ -1,5 +1,6 @@
 #ifndef STUDENT_H
 #define STUDENT_H
+#include <iostream>
 
 //#include "team.h"
 class Team;
@@ -11,7 +12,7 @@ class Student{
   Team* team;
 
 public:
-  Student(const int& id, const int& grade, const int& power) : id(id), grade(grade), power(power) {}
+  Student(const int& id, const int& grade, const int& power) : id(id), grade(grade), power(power), team(NULL) {}
   ~Student() {}
 
   const int& getID() const{
