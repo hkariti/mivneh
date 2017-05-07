@@ -11,8 +11,8 @@ void schoolTest(){
 
   //invalid arguments
   assert(Technion.addStudent(0, 1, 10) == INVALID_INPUT);
-  assert(Technion.addStudent(11,0,10) == INVALID_INPUT);
-  assert(Technion.addStudent(1,1,-1) == INVALID_INPUT);
+  assert(Technion.addStudent(11,10,0) == INVALID_INPUT);
+  assert(Technion.addStudent(1,-1,1) == INVALID_INPUT);
 
   //student already exists
   assert(Technion.addStudent(1,2,20) == FAILURE);
@@ -97,7 +97,10 @@ void schoolTest(){
 
 }
 
-
+int main(){
+  schoolTest();
+  return 0;
+}
 
 
 
