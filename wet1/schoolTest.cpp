@@ -19,22 +19,22 @@ void schoolTest(){
 
   //find most powerful student so far in the whole system
 
-  int* id;
-  assert(Technion.getMostPowerful(-1, id) == SUCCESS);
-  assert(*id == 2);
+  int id = 0;
+  assert(Technion.getMostPowerful(-1, &id) == SUCCESS);
+  assert(id == 2);
 
   //invalid argument
-  assert(Technion.getMostPowerful(0,id) == INVALID_INPUT);
+  assert(Technion.getMostPowerful(0, &id) == INVALID_INPUT);
   assert(Technion.getMostPowerful(-1, NULL) == INVALID_INPUT);
 
   //invalid team
-  assert(Technion.getMostPowerful(1, id) == FAILURE);
+  assert(Technion.getMostPowerful(1, &id) == FAILURE);
 
   //removing
 
   //remove existing student
   assert(Technion.removeStudent(2) == SUCCESS);
-  assert(Technion.getMostPowerful(-1, id) == SUCCESS);
+  assert(Technion.getMostPowerful(-1, &id) == SUCCESS);
 
   //remove non-exsitant student
   assert(Technion.removeStudent(2) == FAILURE);
@@ -50,8 +50,8 @@ void schoolTest(){
   Technion.addStudent(3,3,30);
 
   //check if the most powerful student in the system updates when adding new students
-  Technion.getMostPowerful(-1, id);
-  assert(*id == 3);
+  Technion.getMostPowerful(-1, &id);
+  assert(id == 3);
 
   //adding team
 
@@ -74,27 +74,27 @@ void schoolTest(){
 
   //get most powerful in team
 
-  Technion.getMostPowerful(-1,id);
-  assert(*id == 3);
-  assert(Technion.getMostPowerful(1,id) == SUCCESS);
-  assert(*id == 1);
+  Technion.getMostPowerful(-1,&id);
+  assert(id == 3);
+  assert(Technion.getMostPowerful(1,&id) == SUCCESS);
+  assert(id == 1);
 
   //invalid arguments
-  assert(Technion.getMostPowerful(2,id) == FAILURE);
+  assert(Technion.getMostPowerful(2,&id) == FAILURE);
 
   //adding a new student to a team that is to become the most powerful student
   Technion.moveStudentToTeam(3,1);
-  Technion.getMostPowerful(1,id);
-  assert(*id == 3);
+  Technion.getMostPowerful(1,&id);
+  assert(id == 3);
 
   //remove the most powerful student in the system and in a given team
   Technion.removeStudent(3);
-  Technion.getMostPowerful(1,id);
-  assert(*id == 1);
-  Technion.getMostPowerful(-1, id);
-  assert(*id == 2);
+  Technion.getMostPowerful(1,&id);
+  assert(id == 1);
+  Technion.getMostPowerful(-1, &id);
+  assert(id == 2);
 
-
+  std::cout << "WOO_HOO" << std::endl;
 }
 
 int main(){

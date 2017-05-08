@@ -53,11 +53,13 @@ public:
     }
 
     //add team to team tree
+    Team* newTeam;
     try{
-      Team* newTeam = new Team(teamID);
+      newTeam = new Team(teamID);
       teams.insert(teamID, newTeam);
     }
     catch(teamTree::AlreadyThere& e){
+      delete newTeam;
       return FAILURE;
     }
     catch(std::bad_alloc& e){
@@ -102,6 +104,7 @@ public:
     catch(std::bad_alloc& e){
       return ALLOCATION_ERROR;
     }
+    return SUCCESS;
   }
 
   StatusType getMostPowerful(int teamID, int* studentID){
