@@ -93,7 +93,7 @@ public:
 
     //remove student from previous team and add to the current team.
     try{
-      Student* currentStudent = students.find(studentID);
+    Student* currentStudent = students.find(studentID);
     Team* prevTeam = currentStudent->getTeam();
     if(prevTeam != NULL){
       prevTeam->removeStudent(currentStudent->getPower(), studentID);

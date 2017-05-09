@@ -515,5 +515,11 @@ public:
     return Iterator(NULL);
   }
 
+  treeSanity(){
+    checkOrder();
+    checkBF();
+    checkParents();
+  }
+
 };
 #endif

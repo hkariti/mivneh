@@ -94,6 +94,52 @@ void schoolTest(){
   Technion.getMostPowerful(-1, &id);
   assert(id == 2);
 
+  //getAllStudentsByPower
+  Technion.addStudent(3,3,30);
+  Technion.moveStudentToTeam(3,1);
+  Technion.addStudent(4,4,40);
+
+  int length = 0;
+  int* students;
+  //check getting students from the whole system
+  assert(Technion.getAllStudentsByPower(-1, &students, &length) == SUCCESS);
+  assert(length == 4);
+  assert(*students == 4);
+  assert(*(students + 1) == 3);
+  assert(*(students + 2) == 2);
+  assert(*(students + 3) == 1);
+  delete students;
+
+  //check getting students from a certian team
+  Technion.addStudent(5,4,40);
+  Technion.addTeam(2);
+  Technion.moveStudentToTeam(4,2);
+  Technion.moveStudentToTeam(5,2);
+  assert(Technion.getAllStudentsByPower(2, &students, &length) == SUCCESS);
+  assert(length == 2);
+  assert(*students == 4);
+  assert(*(students + 1) == 5);
+  delete students;
+
+  //check moving student from team to team
+  Technion.moveStudentToTeam(4,1);
+  Technion.getAllStudentsByPower(2,&students, &length);
+  std::cout << " length is : " << length << std::endl;
+  Technion.getMostPowerful(2, &id);
+  std::cout << " most powerful in the team: " << id << std::endl;
+  assert(length == 1);
+  delete students;
+  Technion.getAllStudentsByPower(1, &students, &length);
+  assert(length == 3);
+  delete students;
+
+  //checking invalid input for getAllStudentsByPower
+  assert(Technion.getAllStudentsByPower(0, &students, &length) == INVALID_INPUT);
+  assert(Technion.getAllStudentsByPower(-1, NULL, &length) == INVALID_INPUT);
+  assert(Technion.getAllStudentsByPower(-1, &students, NULL));
+
+
+
   std::cout << "WOO_HOO" << std::endl;
 }
 
