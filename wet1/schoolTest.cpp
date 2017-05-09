@@ -35,6 +35,7 @@ void schoolTest(){
   //remove existing student
   assert(Technion.removeStudent(2) == SUCCESS);
   assert(Technion.getMostPowerful(-1, &id) == SUCCESS);
+assert(id == 1);
 
   //remove non-exsitant student
   assert(Technion.removeStudent(2) == FAILURE);
@@ -108,7 +109,7 @@ void schoolTest(){
   assert(*(students + 1) == 3);
   assert(*(students + 2) == 2);
   assert(*(students + 3) == 1);
-  delete students;
+  delete [] students;
 
   //check getting students from a certian team
   Technion.addStudent(5,4,40);
@@ -119,32 +120,93 @@ void schoolTest(){
   assert(length == 2);
   assert(*students == 4);
   assert(*(students + 1) == 5);
-  delete students;
+  delete [] students;
 
   //check moving student from team to team
   Technion.moveStudentToTeam(4,1);
   Technion.getAllStudentsByPower(2,&students, &length);
-  std::cout << " length is : " << length << std::endl;
   Technion.getMostPowerful(2, &id);
-  std::cout << " most powerful in the team: " << id << std::endl;
+  assert(id == 5);
   assert(length == 1);
-  delete students;
+assert(*students == 5);
+  delete[] students;
   Technion.getAllStudentsByPower(1, &students, &length);
   assert(length == 3);
-  delete students;
+assert(*students == 4);
+assert(*(students + 1) == 3);
+assert(*(students +2) == 1);
+  delete [] students;
 
   //checking invalid input for getAllStudentsByPower
   assert(Technion.getAllStudentsByPower(0, &students, &length) == INVALID_INPUT);
   assert(Technion.getAllStudentsByPower(-1, NULL, &length) == INVALID_INPUT);
-  assert(Technion.getAllStudentsByPower(-1, &students, NULL));
+  assert(Technion.getAllStudentsByPower(-1, &students, NULL) == INVALID_INPUT);
 
+  //checking increaseLevel
+  //invalid input
+  assert(Technion.increaseLevel(-1, 1) == INVALID_INPUT);
+  assert(Technion.increaseLevel(1, 0) == INVALID_INPUT);
 
+//update a grade with one person  
+  assert(Technion.increaseLevel(3, 20) == SUCCESS);
+  assert(Technion.getMostPowerful(-1, &id) == SUCCESS);
+  assert(id == 3);
+  assert(Technion.getMostPowerful(1, &id) == SUCCESS);
+  assert(id == 3);
 
-  std::cout << "WOO_HOO" << std::endl;
+//update a grade with 1 person moving to not most powerful
+  assert(Technion.increaseLevel(2,20) == SUCCESS);
+  assert(Technion.getMostPowerful(-1, &id) == SUCCESS);
+  assert(id == 3);
+  assert(Technion.getAllStudentsByPower(-1, &students, &length) == SUCCESS);
+  assert(length == 5);
+  assert(*(students + 1) == 2);
+  delete [] students;
+  assert(Technion.getAllStudentsByPower(1, &students, &length) == SUCCESS);
+  assert(length == 3);
+  assert(*(students + 1) == 4);
+  delete [] students;
+
+//update a grade with 2 students
+  assert(Technion.increaseLevel(4,5) == SUCCESS);
+  assert(Technion.getAllStudentsByPower(1, &students, &length) == SUCCESS);
+  assert(*(students + 1) == 4);
+  delete [] students;
+  assert(Technion.getAllStudentsByPower(-1, &students, &length) == SUCCESS);
+  assert(*(students + 1) == 4);
+  assert(*(students + 2) == 5);
+delete [] students;
+
+//update a grade with no students
+  assert(Technion.increaseLevel(10, 10) == SUCCESS);
+
+  std::cout << "~~~~~~~~~~WOO_HOO~~~~~~~~~~" << std::endl;
+}
+
+void schoolSmallRemove(){
+School technion;
+
+technion.addStudent(1,1,10);
+technion.addStudent(2,2,20);
+technion.addStudent(3,3,30);
+
+technion.addTeam(1);
+technion.addTeam(2);
+
+technion.moveStudentToTeam(1,1);
+technion.moveStudentToTeam(2,1);
+technion.moveStudentToTeam(1,2);
+
+int* students;
+int length;
+technion.getAllStudentsByPower(1, &students, &length);
+assert(length == 1);
+delete[] students;
 }
 
 int main(){
-  schoolTest();
+//schoolSmallRemove();  
+schoolTest();
   return 0;
 }
 

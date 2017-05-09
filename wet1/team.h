@@ -27,16 +27,14 @@ public:
   void addStudent(Student* student) {
     if (!student) throw NullArgument();
     PowerIDPair key(student->getPower(), student->getID());
-    students.insert(key, student);
+students.insert(key, student);
     updateMostPowerfulStudent();
-    students.treeSanity();
   }
 
   void removeStudent(int power, int id) {
     PowerIDPair key(power, id);
     students.remove(key);
     updateMostPowerfulStudent();
-    students.treeSanity();
   }
 
   void increaseLevel(int grade, int powerIncrease) {

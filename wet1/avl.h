@@ -268,6 +268,7 @@ public:
     if (!base) return;
 
     if (base->BF > 1 || base->BF < -1) {
+std::cout << "BF error" << std::endl;
       throw DebugException();
     }
 
@@ -286,7 +287,8 @@ public:
     it++;
     for (Key current=*it; it != end(); it++) {
       if (current < previous) {
-        throw DebugException();
+std::cout << "order error" << std::endl;       
+ throw DebugException();
       }
     }
   }
@@ -295,6 +297,7 @@ public:
   void checkParentsRecurse(Node* current, Node* parent) const {
     if (!current) return;
     if (current->parent != parent) {
+std::cout << "parent error" << std::endl;
       throw DebugException();
     }
     checkParentsRecurse(current->left, current);
@@ -316,18 +319,25 @@ public:
   void printInOrder(const Node* node) const {
     if (!node) return;;
     printInOrder(node->left);
+std::cout << " " << *node->key << " ";
     printInOrder(node->right);
   }
 
   // prints the tree according to preoder walk through
   void printPreOrder(const Node* node) const {
     if (!node) return;;
-    printPreOrder(node->left);
+std::cout << " " << *node->key << " ";    
+printPreOrder(node->left);
     printPreOrder(node->right);
   }
   void print() const {
-    printInOrder(head);
+if(head == NULL) {
+std::cout << "no tree to print" << std::endl;
+}    
+printInOrder(head);
+std::cout << std::endl;
     printPreOrder(head);
+std::cout << std::endl;
   }
 
   // finds a given key in the tree and returns its value. if the key does not exsist throws NotFound
@@ -436,9 +446,13 @@ public:
       }
       else if(current->left == NULL && current->right != NULL){
         head = current->right;
+head->parent = NULL;
+current->right = NULL;
       }
       else{
         head = current->left;
+current->left = NULL;
+head->parent = NULL;
       }
     }
     else{
@@ -516,7 +530,9 @@ public:
   }
 
   void treeSanity(){
-    checkOrder();
+this->print();    
+std::cout << "printing done" << std::endl;
+//checkOrder();
     checkBF();
     checkParents();
   }

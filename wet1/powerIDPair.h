@@ -1,6 +1,6 @@
 #ifndef PAIR_H
 #define PAIR_H
-
+#include <ostream>
 
 class PowerIDPair{
 
@@ -47,10 +47,16 @@ public:
     return false;
   }
 
+friend std::ostream& operator<<(std::ostream& os, const PowerIDPair& pair);
 
 
 
 };
 
+
+std::ostream& operator<<(std::ostream& os, const PowerIDPair& pair){
+os << "id is: " << pair.id << " power is: " << pair.power;
+return os;
+}
 
 #endif
