@@ -515,7 +515,7 @@ public:
     return Iterator(NULL);
   }
 
-  treeSanity(){
+  void treeSanity(){
     checkOrder();
     checkBF();
     checkParents();
