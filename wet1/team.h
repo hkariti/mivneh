@@ -1,6 +1,7 @@
 #ifndef TEAM_H
 #define TEAM_H
 
+#include <stdlib.h>
 #include <exception>
 #include "avl.h"
 #include "student.h"
@@ -102,7 +103,7 @@ students.insert(key, student);
 
     // Allocate array and fill it
     if (!*n) return NULL;
-    int* studentsArray = new int[*n];
+    int* studentsArray = (int*)malloc((*n)*sizeof(int));
     int arrayPos = 0;
     for (PowerTree::Iterator it = students.last(); it != students.end(); it--) {
       studentsArray[arrayPos] = it.value()->getID();
