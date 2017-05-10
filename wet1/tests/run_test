@@ -21,7 +21,7 @@ function run_test {
     echo "running... $EXEC < $test_name.in > $out_file"
     echo "running valgrind..."
     valgrind --log-file=$vagrant_log --leak-check=full ./$EXEC < $test_name.in > $out_file
-    if grep -q "0 bytes in 0 blocks" $vagrant_log && grep -q '0 errors' $vagrant_log then
+    if grep -q "0 bytes in 0 blocks" $vagrant_log && grep -q '0 errors' $vagrant_log; then
         echo "MEMORY CHECK PASSED"
     else
         echo "MEMORY CHECK FAILED. Vagrant log is in $vagrant_log"
