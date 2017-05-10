@@ -1,0 +1,53 @@
+#!/bin/bash
+
+EXEC=main
+
+function run_test {
+    if (( $# != 2 )); then
+        echo "Usage: ./run_test <number_of_lines> <test_id>"
+        exit
+    fi
+    num_of_lines=$1
+    test_name="randtest"$2
+    out_file=${test_name}.res
+    if (( num_of_lines <= 0 )); then
+        echo "<number_of_lines> must be positive"
+        exit
+    fi
+    echo "generating a random test... ${test_name}.in ${test_name}.out"
+    python2 testcreate.py $num_of_lines $test_name 
+    echo "running... $EXEC < $test_name.in > $out_file"
+    echo "running valgrind..."
+    valgrind --leak-check=full ./$EXEC < $test_name.in > $out_file
+    if (( `grep -c "0 bytes in 0 blocks" valgrind.out` == 1  )); then
+        echo "MEMORY CHECK PASSED"
+    else
+        echo "MEMORY CHECK FAILED"
+    fi
+    log_name=${test_name}.log
+    echo "diff result: wanted_output VS my_output" > $log_name
+    diff ${test_name}.out $out_file >> $log_name
+    diff_ret=$?
+    if (( diff_ret == 0 )); then
+        echo "TEST PASSED"
+        rm $out_file $log_name
+    else
+        echo "TEST FAILED"
+        python2 translate.py ${test_name}.in
+        echo "the differences are stored in ${log_name} "
+        echo "you can find C version of this test (for debugging) in ${test_name}.debug.c"
+    fi
+    echo 
+    echo 
+    rm "valgrind.out"
+}
+
+let test_num=0
+lines_num=(1000 1000 5000 5000 10000 10000 20000 20000 30000 30000 50000 50000 100000)
+echo "compiling... g++ -g -DNDEBUG -Wall *.cpp -o $EXEC"
+g++ -g ../*.cpp -I .. -o $EXEC
+for num_of_lines in ${lines_num[@]} ; do
+    run_test "$num_of_lines" "$test_num"
+    let test_num++
+done 
+rm $EXEC
