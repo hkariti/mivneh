@@ -10,6 +10,8 @@ function run_test {
     num_of_lines=$1
     test_name="randtest"$2
     out_file=${test_name}.res
+    vagrant_log=${test_name}.vagrant
+    test_passed=yes
     if (( num_of_lines <= 0 )); then
         echo "<number_of_lines> must be positive"
         exit
@@ -18,11 +20,12 @@ function run_test {
     python2 testcreate.py $num_of_lines $test_name 
     echo "running... $EXEC < $test_name.in > $out_file"
     echo "running valgrind..."
-    valgrind --leak-check=full ./$EXEC < $test_name.in > $out_file
-    if (( `grep -c "0 bytes in 0 blocks" valgrind.out` == 1  )); then
+    valgrind --log-file=$vagrant_log --leak-check=full ./$EXEC < $test_name.in > $out_file
+    if grep -q "0 bytes in 0 blocks" valgrind.out && grep -q '0 errors' valgrind.out; then
         echo "MEMORY CHECK PASSED"
     else
-        echo "MEMORY CHECK FAILED"
+        echo "MEMORY CHECK FAILED. Vagrant log is in $vagrant_log"
+        test_passed=
     fi
     log_name=${test_name}.log
     echo "diff result: wanted_output VS my_output" > $log_name
@@ -30,22 +33,24 @@ function run_test {
     diff_ret=$?
     if (( diff_ret == 0 )); then
         echo "TEST PASSED"
-        rm $out_file $log_name
     else
         echo "TEST FAILED"
+        test_passed=
         python2 translate.py ${test_name}.in
         echo "the differences are stored in ${log_name} "
         echo "you can find C version of this test (for debugging) in ${test_name}.debug.c"
     fi
     echo 
     echo 
-    rm "valgrind.out"
+    if [ -n "$test_passed" ]; then
+        rm -f $out_file $log_name $vagrant_log
+    fi
 }
 
 let test_num=0
 lines_num=(1000 1000 5000 5000 10000 10000 20000 20000 30000 30000 50000 50000 100000)
 echo "compiling... g++ -g -DNDEBUG -Wall *.cpp -o $EXEC"
-g++ -g ../*.cpp -I .. -o $EXEC
+g++ -g ../main1.cpp ../library1.cpp -I .. -o $EXEC
 for num_of_lines in ${lines_num[@]} ; do
     run_test "$num_of_lines" "$test_num"
     let test_num++
