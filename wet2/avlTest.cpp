@@ -218,6 +218,13 @@ void AVLMerge(){
   }
 
   tree5.mergeTrees(tree4);
+
+  AVLTree<int, int> tree6, tree7, tree8;
+  tree6.insert(1,1);
+
+  tree6.mergeTrees(tree7);
+  tree7.mergeTrees(tree6);
+  tree8.mergeTrees(tree7);
 }
 
 int main(){

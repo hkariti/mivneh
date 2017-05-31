@@ -414,8 +414,9 @@ std::cout << "parent error" << std::endl;
     while(current->right != NULL){
       current = current->right;
     }
-
+    if(hight > 1){
     trimDownRecursive(head, pow(2,hight) - 1 - n, 0);
+    }
     return head;
   }
 
@@ -751,8 +752,19 @@ std::cout << "printing done" << std::endl;
   }
 
   void mergeTrees(AVLTree<Key, Value>& tree2){
-    int size1 = head->numberRight + head->numberLeft + 1;
-    int size2 = tree2.head->numberRight + tree2.head->numberLeft + 1;
+    int size1, size2;
+    if(head != NULL){
+      size1 = head->numberRight + head->numberLeft + 1;
+    }
+    else{
+      size1 = 0;
+    }
+    if(tree2.head != NULL){
+      size2 = tree2.head->numberRight + tree2.head->numberLeft + 1;
+    }
+    else{
+      size2 = 0;
+    } 
     Node* newTree = buildEmpty(size1 + size2);
     Node* current = newTree;
     while(current->left != NULL){
