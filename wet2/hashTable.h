@@ -41,18 +41,17 @@ public:
   }
 
   // Insert new keys
-  void insert(const Key& key, const Value& value) {
+  Value& insert(const Key& key, const Value& value) {
     try {
-      try {
       searchFull(key);
-      } catch(...) {};
       throw EntryExists();
-    } catch (...) {
+    } catch (NoSuchEntry) {
       int i;
       i = searchEmpty(key);
       array[i].init(key, value);
       used++;
       if (used == size) resize(2*size);
+      return array[i].getValue();
     }
   }
 
