@@ -211,6 +211,13 @@ void AVLMerge(){
 
   tree4.mergeTrees(tree1);
   treeSanity(tree4);
+
+  AVLTree<int,int> tree5;
+  for(int i = 11 ; i < 100; i++){
+    tree5.insert(i,i);
+  }
+
+  tree5.mergeTrees(tree4);
 }
 
 int main(){

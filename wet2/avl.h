@@ -425,7 +425,12 @@ std::cout << "parent error" << std::endl;
 
     head->hightLeft = updateHightAndBFRecursive(head->left);
     head->hightRight = updateHightAndBFRecursive(head->right);
-    head->hight = head->hightRight + head->hightLeft + 1;
+    if(head->hightRight > head->hightLeft){
+      head->hight = head->hightRight + 1;
+    }
+    else{
+      head->hight = head->hightLeft + 1;
+    }
     head->BF = head->hightLeft - head->hightRight;
     return head->hight;
   }
