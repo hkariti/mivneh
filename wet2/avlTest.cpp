@@ -7,6 +7,7 @@ void treeSanity(AVLTree<T, int>& tree) {
   tree.checkOrder();
   tree.checkBF();
   tree.checkParents();
+  tree.checkRank();
 }
 
 void AVLTreeRollTest(){

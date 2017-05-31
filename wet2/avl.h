@@ -218,15 +218,23 @@ public:
     int newRightHight;
     if(top->left == NULL) {
       newLeftHight = 0;
+      top->numberLeft = 0;
+      top->powerLeft = 0;
     }
     else{
       newLeftHight = (top->left)->hight;
+      top->numberLeft = (top->left->numberLeft) + (top->left->numberRight) + 1;
+      top->powerLeft = (top->left->powerLeft) + (top->left->powerRight) + *(top->left->key);
     }
     if(top->right == NULL) {
       newRightHight = 0;
+      top->numberRight = 0;
+      top->powerRight = 0;
     }
     else{
       newRightHight = (top->right)->hight;
+      top->numberRight = (top->right->numberLeft) + (top->right->numberRight) + 1;
+      top->powerRight = (top->right->powerLeft) + (top->right->powerRight) + *(top->right->key);
     }
     if(newRightHight > newLeftHight) {
       top->hight = newRightHight + 1;
@@ -238,10 +246,6 @@ public:
     top->hightRight = newRightHight;
     top->BF = top->hightLeft - top->hightRight;
 
-    top->numberLeft = (top->left->numberLeft) + (top->left->numberRight) + 1;
-    top->numberRight = (top->right->numberLeft) + (top->right->numberRight) + 1;
-    top->powerLeft = (top->left->powerLeft) + (top->left->powerRight) + *(top->left->key);
-    top->powerRight = (top->right->powerLeft) + (top->right->powerRight) + *(top->right->key);
   }
 
   // makes sure the tree is balanced, starting at the given node and moving up
@@ -320,6 +324,55 @@ std::cout << "parent error" << std::endl;
     checkParentsRecurse(head, NULL);
   }
 
+  void checkRankRecurse(Node* current){
+    if(!current) return;
+    if(current->left == NULL){
+      if(current->numberLeft != 0){
+        std::cout << "there are no left nodes but it thinks there are " << current->numberLeft << " nodes" << std::endl;
+        throw DebugException();
+      }
+      if(current->powerLeft != 0){
+        std::cout << "there are no left nodes but it thinks there is a sum of " << current->powerLeft << " power" << std::endl;
+        throw DebugException();
+      }
+    }
+    else{
+      if(current->numberLeft != current->left->numberLeft + current->right->numberRight + 1){
+        std::cout << "there are nodes to the left, but the numbers dont agree"  << std::endl;
+        throw DebugException();
+      }
+      if(current->powerLeft != current->left->powerRight + current->left->powerLeft + *(current->left->key)){
+        std::cout << "there are nodes to the right but the power sums dont agree" << std::endl;
+        throw DebugException();
+      }
+    }
+    if(current->right == NULL){
+      if(current->numberRight != 0){
+        std::cout << "there are no right nodes but it thinks there are " << current->numberRight << " nodes" << std::endl;
+        throw DebugException();
+      }
+      if(current->powerRight != 0){
+        std::cout << "there are no right nodes but it thinks there is a sum of " << current->powerRight << " power" << std::endl;
+      }
+    }
+    else{
+      if(current->numberRight != current->right->numberLeft + current->right->numberRight + 1){
+        std::cout << "there are nodes to the right but the number dont agree" << std::endl;
+        throw DebugException();
+      }
+      if(current->powerRight != current->right->numberRight + current->right->numberLeft + *(current->right->key)){
+        std::cout << "there are nodes to the right bu the power sums dont agree" << std::endl;
+        throw DebugException();
+      }
+    }
+    checkRankRecurse(current->left);
+    checkRankRecurse(current->right);
+  }
+
+  void checkRank(){
+    checkRankRecurse(head);
+  }
+
 public:
   AVLTree() {
     head = NULL;
@@ -383,10 +436,15 @@ std::cout << std::endl;
       return;
     }
 
+    bool isThere = true;
     try{
       this->find(key);
     }
     catch(NotFound& e){
+      isThere = false;
+    }
+
+    if(isThere){
       throw AlreadyThere();
     }
 
@@ -463,7 +521,7 @@ std::cout << std::endl;
       current->numberRight--;
       current->powerRight = current->powerRight - *(next->key);
       Node* fixing = current->right;
-      while(fixing->left != next){
+      while(fixing->left != next && fixing->left != NULL){
         fixing->numberLeft--;
         fixing->powerLeft = fixing->powerLeft - *(next->key);
         fixing = fixing->left;
@@ -566,6 +624,7 @@ head->parent = NULL;
     return Iterator(current);
   }
 
+
   Iterator end() const{
     return Iterator(NULL);
   }
@@ -576,6 +635,7 @@ std::cout << "printing done" << std::endl;
 //checkOrder();
     checkBF();
     checkParents();
+    checkRank();
   }
 
 };
