@@ -278,6 +278,7 @@ public:
   class EndOfTree : public std::exception {};
   class AlreadyThere : public std::exception {};
   class DebugException : public std::exception {};
+  class InvalidInput : public std::exception {}; 
   //debug functions
 
   //checks that all the BF in the tree are allowed
@@ -425,6 +426,34 @@ std::cout << std::endl;
       }
     }
     throw NotFound();
+  }
+
+  int findSumOfTopX(int x){
+    if(x <= 0){
+      throw InvalidInput();
+    }
+
+    int people = 0;
+    int powerSum = 0;
+    Node* current = head;
+
+    if(1 + current->numberRight + current->numberLeft <= x){
+      return current->powerRight + current->powerLeft + *(current->key);
+    }
+
+    while(current != NULL){
+      if(people + 1 + current->numberRight > x){
+        current = current->right;
+      }
+      else if(people + 1 + current->numberRight < x){
+        people += 1 + current->numberRight;
+        powerSum += current->powerRight + *(current->key);
+      }
+      else{
+        return powerSum + current->powerRight + *(current->key);
+      }
+    }
+    throw NotFound(); 
   }
 
   // inserts a key and value into the tree. if the key already exists throws AlreadyThere

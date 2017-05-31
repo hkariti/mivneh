@@ -1,4 +1,5 @@
 #include "avl.h"
+#include <assert.h>
 
 template <typename T>
 void treeSanity(AVLTree<T, int>& tree) {
@@ -155,9 +156,41 @@ void AVLBigTree() {
     tree.remove(7.01);
     treeSanity(tree);
 }
+
+void AVLTreeTopTest(){
+  AVLTree<int, int> tree;
+  tree.insert(1,1);
+  tree.insert(2,2);
+  tree.insert(3,3);
+  tree.insert(4,4);
+  tree.insert(5,5);
+  tree.insert(6,6);
+  tree.insert(7,7);
+
+  try{
+    tree.findSumOfTopX(0);
+  }
+  catch(AVLTree<int,int>::InvalidInput& e){
+    std::cout << "safe from invalid numbers" << std::endl;
+  }
+
+  assert(tree.findSumOfTopX(1) == 7);
+  assert(tree.findSumOfTopX(2) == 13);
+  std::cout << "top 3 sum is" << tree.findSumOfTopX(3) << std::endl;
+
+  assert(tree.findSumOfTopX(3) == 18);
+  assert(tree.findSumOfTopX(4) == 22);
+  assert(tree.findSumOfTopX(5) == 25);
+  assert(tree.findSumOfTopX(6) == 27);
+  assert(tree.findSumOfTopX(7) == 28);
+  assert(tree.findSumOfTopX(8) == 28);
+
+}
+
 int main(){
- AVLTreeRollTest();
+ //AVLTreeRollTest();
  //AVLBigTree();
+ AVLTreeTopTest();
 
  return 0;
 }
