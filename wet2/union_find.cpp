@@ -38,7 +38,7 @@ void UnionTest(){
 
   test.join(1,2); //1 should be parent
   test.join(3,4); //3 should be parent
-  test.join(4,2); //1 should be parent
+  test.join(2,4); //1 should be parent
   test.print();
 
   test.join(5,1); //1 should be parent

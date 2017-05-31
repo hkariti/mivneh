@@ -19,19 +19,19 @@ private:
 public:
   void print() const{
     std::cout << "printing data base..." << std::endl;
-    for(int i = 1 ; i < size ; i++){
+    for(int i = 1 ; i <= size ; i++){
       std::cout << "team id " << i << ", parent: " << *(parents + i) << std::endl;
     }
   }
 
   class NoSuchTeam : public std::exception {};
 
-  UnionFind(const int n) : size(n + 1){
-    values = new Value*[size];
-    parents = new int[size];
-    number_of_sons = new int[size];
+  UnionFind(const int n) : size(n){
+    values = new Value*[size + 1];
+    parents = new int[size + 1];
+    number_of_sons = new int[size + 1];
 
-    for(int i = 0; i < size ; i++)
+    for(int i = 0; i <= size ; i++)
       {
         *(values + i) = new Value;
         *(parents + i) = not_there;
@@ -41,7 +41,7 @@ public:
   }
 
   ~UnionFind() {
-    for(int i = 0 ; i < size; i++){
+    for(int i = 0 ; i <= size; i++){
       delete *(values + i);
     }
     delete [] values;
@@ -84,7 +84,7 @@ public:
     }
     parent = current;
     current = i;
-    while(*(parents + current) != parent){
+    while(*(parents + current) != parent && *(parents + current) != not_there){
       int temp = current;
       current = *(parents + current);
       *(parents + temp) = parent;
