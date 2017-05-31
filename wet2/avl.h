@@ -132,6 +132,8 @@ public:
 
 
   public:
+    Node(Node* parent) : key(NULL), value(NULL), left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0), parent(parent), numberRight(0), numberLeft(0), powerRight(0), powerLeft(0) {}
+
     Node(const Key& key, const Value& value, Node* parent=NULL): left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0),hight(1), parent(parent), numberRight(0), numberLeft(0), powerRight(0), powerLeft(0) {
       this->key = new Key(key);
       this->value = new Value(value);
@@ -374,6 +376,81 @@ std::cout << "parent error" << std::endl;
     checkRankRecurse(head);
   }
 
+  static Node* buildEmptyRecursive(Node* head, int n){
+    if(n = 0) return NULL;
+    head->left = new Node(head);
+    head->right = new Node(head);
+
+    buildEmptyRecursive(head->left, n - 1);
+    buildEmptyRecursive(head->right, n - 1);
+  }
+
+  static int trimDownRecursive(Node* head, int target, int soFar){
+    if(soFar == target) return soFar;
+    if(head == NULL) return soFar;
+
+    if(head->right == NULL && head->left == NULL){
+      if(head->parent->right == head){
+        head->parent->right = NULL;
+      }
+      else{
+        head->parent->left = NULL;
+      }
+      delete head;
+      return 1 + soFar;
+    }
+
+    int right = trimDownRecursive(head->right, target, soFar);
+    if(right == target) return right;
+    int left = trimDownRecursive(head->left, target, right);
+    return left;
+  }
+
+  static Node* buildEmpty(int n){
+    int hight = ceil(log(n));
+    Node* head = new Node(NULL);
+    buildEmptyRecursive(head, hight);
+    Node* current = head;
+    while(current->right != NULL){
+      current = current->right;
+    }
+
+    trimDownRecursive(head, hight - n, 0);
+    return head;
+  }
+
+
+  static int updateHightAndBFRecursive(Node* head){
+    if(head == NULL) return 0;
+
+    head->hightLeft = updateHightAndBFRecursive(head->left);
+    head->hightRight = updateHightAndBFRecursive(head->right);
+    head->hight = head->hightRight + head->hightLeft + 1;
+    head->BF = head->hightLeft - head->hightRight;
+    return head->hight;
+  }
+
+  static int updateNumbersRecursive(Node* head){
+    if(head == NULL) return 0;
+
+    head->numberLeft = updateNumbersRecursive(head->left);
+    head->numberRight = updateNumbersRecursive(head->right);
+    return head->numberRight + head->numberLeft + 1;
+  }
+
+  static int updatePowerRecursive(Node* head){
+    if(head == NULL) return 0;
+    head->powerLeft = updatePowerRecursive(head->left);
+    head->powerRight = updatePowerRecursive(head->left);
+    return head->powerLeft + head->powerRight + *(head->key);
+  }
+
+  void updateEverything(Node* head){
+    updateHightAndBFRecursive(head);
+    updateNumbersRecursive(head);
+    updatePowerRecursive(head);
+  }
+
 public:
   AVLTree() {
     head = NULL;
@@ -454,7 +531,7 @@ std::cout << std::endl;
         return powerSum + current->powerRight + *(current->key);
       }
     }
-    throw NotFound(); 
+    throw NotFound();
   }
 
   // inserts a key and value into the tree. if the key already exists throws AlreadyThere
@@ -666,6 +743,48 @@ std::cout << "printing done" << std::endl;
     checkBF();
     checkParents();
     checkRank();
+  }
+
+  void mergeTrees(AVLTree<Key, Value>& tree2){
+    int size1 = head->numberRight + head->numberLeft + 1;
+    int size2 = tree2.head->numberRight + tree2.head->numberLeft + 1;
+    Node* newTree = buildEmpty(size1 + size2);
+    Node* current = newTree;
+    while(current->left != NULL){
+      current = current->left;
+    }
+    Iterator newIt(current);
+
+    Iterator it1 = this->first();
+    Iterator it2 = tree2.first();
+
+
+    while(it1 != this->end() && it2 != tree2.end()){
+      if(*it1 > *it2){
+        newIt.replaceWith(*it2, it2.value());
+        it2++;
+        newIt++;
+      }
+      else{
+        newIt.replaceWith(*it1, it1.value());
+        it1++;
+        newIt++;
+      }
+    }
+
+    while(it1 != this->end()){
+      newIt.replaceWith(*it1, it1.value());
+      it1++;
+      newIt++;
+    }
+    while(it2 != tree2.end()){
+      newIt.replaceWith(*it2, it2.value());
+      it2++;
+      newIt++;
+    }
+    updateEverything(newTree);
+    delete head;
+    head = newTree;
   }
 
 };

@@ -185,10 +185,24 @@ void AVLTreeTopTest(){
 
 }
 
+void AVLMerge(){
+  AVLTree<int, int> tree1, tree2;
+  tree1.insert(1,1);
+  tree1.insert(3,3);
+  tree1.insert(5,5);
+
+  tree2.insert(2,2);
+  tree2.insert(4,4);
+  tree2.insert(6,6);
+
+  tree1.mergeTrees(tree2);
+  treeSanity(tree1);
+}
+
 int main(){
  //AVLTreeRollTest();
  //AVLBigTree();
- AVLTreeTopTest();
-
+ //AVLTreeTopTest();
+ AVLMerge();
  return 0;
 }
