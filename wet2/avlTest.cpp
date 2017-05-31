@@ -188,15 +188,29 @@ void AVLTreeTopTest(){
 void AVLMerge(){
   AVLTree<int, int> tree1, tree2;
   tree1.insert(1,1);
-  tree1.insert(3,3);
   tree1.insert(5,5);
+  tree1.insert(7,7);
 
   tree2.insert(2,2);
-  tree2.insert(4,4);
+  tree2.insert(8,8);
   tree2.insert(6,6);
 
   tree1.mergeTrees(tree2);
   treeSanity(tree1);
+
+  AVLTree<int, int> tree3;
+  tree3.insert(3,3);
+  tree3.insert(4,4);
+
+  tree1.mergeTrees(tree3);
+  treeSanity(tree1);
+
+  AVLTree<int, int> tree4;
+  tree4.insert(9,9);
+  tree4.insert(10,10);
+
+  tree4.mergeTrees(tree1);
+  treeSanity(tree4);
 }
 
 int main(){
@@ -204,5 +218,6 @@ int main(){
  //AVLBigTree();
  //AVLTreeTopTest();
  AVLMerge();
+ std::cout << "WOO HOO" << std::endl;
  return 0;
 }

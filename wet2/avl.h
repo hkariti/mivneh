@@ -363,8 +363,8 @@ std::cout << "parent error" << std::endl;
         std::cout << "there are nodes to the right but the number dont agree" << std::endl;
         throw DebugException();
       }
-      if(current->powerRight != current->right->numberRight + current->right->numberLeft + *(current->right->key)){
-        std::cout << "there are nodes to the right bu the power sums dont agree" << std::endl;
+      if(current->powerRight != current->right->powerRight + current->right->powerLeft + *(current->right->key)){
+        std::cout << "there are nodes to the right but the power sums dont agree" << std::endl;
         throw DebugException();
       }
     }
@@ -377,7 +377,7 @@ std::cout << "parent error" << std::endl;
   }
 
   static Node* buildEmptyRecursive(Node* head, int n){
-    if(n = 0) return NULL;
+    if(n == 1) return NULL;
     head->left = new Node(head);
     head->right = new Node(head);
 
@@ -407,7 +407,7 @@ std::cout << "parent error" << std::endl;
   }
 
   static Node* buildEmpty(int n){
-    int hight = ceil(log(n));
+    int hight = ceil(log2(n));
     Node* head = new Node(NULL);
     buildEmptyRecursive(head, hight);
     Node* current = head;
@@ -415,7 +415,7 @@ std::cout << "parent error" << std::endl;
       current = current->right;
     }
 
-    trimDownRecursive(head, hight - n, 0);
+    trimDownRecursive(head, pow(2,hight) - 1 - n, 0);
     return head;
   }
 
@@ -441,7 +441,7 @@ std::cout << "parent error" << std::endl;
   static int updatePowerRecursive(Node* head){
     if(head == NULL) return 0;
     head->powerLeft = updatePowerRecursive(head->left);
-    head->powerRight = updatePowerRecursive(head->left);
+    head->powerRight = updatePowerRecursive(head->right);
     return head->powerLeft + head->powerRight + *(head->key);
   }
 
