@@ -1,4 +1,5 @@
 #include <exception>
+#include <cstddef>
 
 static const int INIT_SIZE = 32;
 
@@ -7,9 +8,12 @@ private:
   enum entryState { free, deleted, full };
   entryState state;
   Key key;
-  Value value;
+  Value* value;
 public:
-  HashTableEntry() : state(free) {};
+  HashTableEntry() : state(free), value(NULL) {};
+  ~HashTableEntry() {
+    delete value;
+  }
   bool isFree() { return state == free; }
   bool isFull() { return state == full; }
   bool isDeleted() { return state == deleted; }
@@ -17,10 +21,10 @@ public:
   void init(const Key& new_key, const Value& new_value) {
     key = new_key;
     state = full;
-    value = new_value;
+    value = new Value(new_value);
   }
   const Key& getKey() const { return key; };
-  Value& getValue() { return value; }
+  Value& getValue() { return *value; }
   void markDeleted() { state = deleted; }
 };
 

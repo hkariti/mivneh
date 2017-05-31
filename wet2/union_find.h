@@ -53,27 +53,30 @@ public:
     if(i <= 0 || j <= 0 || i > size || j > size){
       throw NoSuchTeam();
     }
+    int root1, root2;
     while(*(parents + i) != not_there){
-      i = *(parents + i);
+      root1 = *(parents + i);
     }
     while(*(parents + j) != not_there){
-      j = *(parents +j);
+      root2 = *(parents +j);
     }
-    if(*(number_of_sons + i) >= *(number_of_sons +j)) {
-      *(number_of_sons + i) += *(number_of_sons +j);
-      *(number_of_sons + j) = not_there;
-      *(parents + j) = i;
-      return i;
+    int smallRoot, largeRoot;
+    if(*(number_of_sons + root1) >= *(number_of_sons + root2)) {
+      largeRoot = root1;
+      smallRoot = root2;
     }
-    else{
-      *(number_of_sons + j) += *(number_of_sons + i);
-      *(number_of_sons + i) = not_there;
-      *(parents + i) = j;
-      return j;
+    else {
+      largeRoot = root2;
+      smallRoot = root1;
     }
+    *(number_of_sons + largeRoot) += *(number_of_sons + smallRoot);
+    *(number_of_sons + smallRoot) = not_there;
+    *(parents + smallRoot) = largeRoot;
+    values[largeRoot]->merge(*(values[smallRoot]));
+    return largeRoot;
   }
 
-  Value find(int i){
+  Value& find(int i){
     if(i <= 0 || i > size){
       throw NoSuchTeam();
     }
@@ -90,7 +93,7 @@ public:
       *(parents + temp) = parent;
     }
 
-    return parent;
+    return *(values[parent]);
   }
 
 
