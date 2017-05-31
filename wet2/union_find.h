@@ -16,13 +16,18 @@ private:
   int* parents;
   int* number_of_sons;
 
-
 public:
+  void print() const{
+    std::cout << "printing data base..." << std::endl;
+    for(int i = 1 ; i < size ; i++){
+      std::cout << "team id " << i << ", parent: " << *(parents + i) << std::endl;
+    }
+  }
 
   class NoSuchTeam : public std::exception {};
 
   UnionFind(const int n) : size(n + 1){
-    values = new Value[size];
+    values = new Value*[size];
     parents = new int[size];
     number_of_sons = new int[size];
 
@@ -45,8 +50,14 @@ public:
   }
 
   int join(int i, int j) {
-    if(i < 0 || j < 0 || i > size || j > size){
+    if(i <= 0 || j <= 0 || i > size || j > size){
       throw NoSuchTeam();
+    }
+    while(*(parents + i) != not_there){
+      i = *(parents + i);
+    }
+    while(*(parents + j) != not_there){
+      j = *(parents +j);
     }
     if(*(number_of_sons + i) >= *(number_of_sons +j)) {
       *(number_of_sons + i) += *(number_of_sons +j);
@@ -63,7 +74,7 @@ public:
   }
 
   Value find(int i){
-    if(i < 0 || i > size){
+    if(i <= 0 || i > size){
       throw NoSuchTeam();
     }
     int current = i;
