@@ -448,6 +448,7 @@ std::cout << std::endl;
       else if(people + 1 + current->numberRight < x){
         people += 1 + current->numberRight;
         powerSum += current->powerRight + *(current->key);
+        current = current->left;
       }
       else{
         return powerSum + current->powerRight + *(current->key);

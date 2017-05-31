@@ -176,8 +176,6 @@ void AVLTreeTopTest(){
 
   assert(tree.findSumOfTopX(1) == 7);
   assert(tree.findSumOfTopX(2) == 13);
-  std::cout << "top 3 sum is" << tree.findSumOfTopX(3) << std::endl;
-
   assert(tree.findSumOfTopX(3) == 18);
   assert(tree.findSumOfTopX(4) == 22);
   assert(tree.findSumOfTopX(5) == 25);
