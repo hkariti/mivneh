@@ -124,12 +124,20 @@ public:
     int hight;
     Node* parent;
 
+    //additional fields
+    int numberRight;
+    int numberLeft;
+    int powerRight;
+    int powerLeft;
+
+
   public:
-    Node(const Key& key, const Value& value, Node* parent=NULL): left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0),hight(1), parent(parent) {
+    Node(const Key& key, const Value& value, Node* parent=NULL): left(NULL), right(NULL), BF(0), hightRight(0), hightLeft(0),hight(1), parent(parent), numberRight(0), numberLeft(0), powerRight(0), powerLeft(0) {
       this->key = new Key(key);
       this->value = new Value(value);
     }
   };
+
   Node* head;
 
 
@@ -229,6 +237,11 @@ public:
     top->hightLeft = newLeftHight;
     top->hightRight = newRightHight;
     top->BF = top->hightLeft - top->hightRight;
+
+    top->numberLeft = (top->left->numberLeft) + (top->left->numberRight) + 1;
+    top->numberRight = (top->right->numberLeft) + (top->right->numberRight) + 1;
+    top->powerLeft = (top->left->powerLeft) + (top->left->powerRight) + *(top->left->key);
+    top->powerRight = (top->right->powerLeft) + (top->right->powerRight) + *(top->right->key);
   }
 
   // makes sure the tree is balanced, starting at the given node and moving up
@@ -287,7 +300,7 @@ std::cout << "BF error" << std::endl;
     it++;
     for (Key current=*it; it != end(); it++) {
       if (current < previous) {
-std::cout << "order error" << std::endl;       
+std::cout << "order error" << std::endl;
  throw DebugException();
       }
     }
@@ -326,14 +339,15 @@ std::cout << " " << *node->key << " ";
   // prints the tree according to preoder walk through
   void printPreOrder(const Node* node) const {
     if (!node) return;;
-std::cout << " " << *node->key << " ";    
+std::cout << " " << *node->key << " ";
 printPreOrder(node->left);
     printPreOrder(node->right);
   }
+
   void print() const {
 if(head == NULL) {
 std::cout << "no tree to print" << std::endl;
-}    
+}
 printInOrder(head);
 std::cout << std::endl;
     printPreOrder(head);
@@ -368,33 +382,46 @@ std::cout << std::endl;
       head = node;
       return;
     }
+
+    try{
+      this->find(key);
+    }
+    catch(NotFound& e){
+      throw AlreadyThere();
+    }
+
     Node* current = head;
-    while(*(current->key) != key) {
+    while(true) {
       if(*(current->key) < key) {
         if(current->right == NULL) {
           break;
         }
+        current->numberRight++;
+        current->powerRight = current->powerRight + key;
         current = current->right;
       }
       else{
         if(current->left == NULL) {
           break;
         }
+        current->numberLeft++;
+        current->powerLeft = current->powerLeft + key;
         current = current->left;
       }
-    }
-    if(*(current->key) == key) {
-      throw AlreadyThere();
     }
 
     if(current->left == NULL && *(current->key) > key) {
       Node* addition = new Node(key, value);
       current->left = addition;
+      current->numberLeft++;
+      current->powerLeft = current->powerLeft + key;
       addition->parent = current;
     }
     if(current->right == NULL && *(current->key) < key) {
       Node* addition = new Node(key, value);
       current->right = addition;
+      current->numberRight++;
+      current->powerRight = + current->powerRight + key;
       addition->parent = current;
     }
 
@@ -407,15 +434,19 @@ std::cout << std::endl;
       throw isEmpty();
     }
     //makes sure the key exists
-      this->find(key);
+    this->find(key);
 
     //find the node that is to be removed
     Node* current = head;
     while(*(current->key) != key) {
       if(*(current->key) > key) {
+        current->numberLeft--;
+        current->powerLeft = current->powerLeft - key;
         current = current->left;
       }
       else{
+        current->numberRight--;
+        current->powerRight = current->powerRight - key;
         current = current->right;
       }
     }
@@ -428,6 +459,16 @@ std::cout << std::endl;
       while(next->left != NULL) {
         next = next->left;
       }
+
+      current->numberRight--;
+      current->powerRight = current->powerRight - *(next->key);
+      Node* fixing = current->right;
+      while(fixing->left != next){
+        fixing->numberLeft--;
+        fixing->powerLeft = fixing->powerLeft - *(next->key);
+        fixing = fixing->left;
+      }
+
       // Switch
       Key* tempKey = next->key;
       next->key = current->key;
@@ -530,7 +571,7 @@ head->parent = NULL;
   }
 
   void treeSanity(){
-this->print();    
+this->print();
 std::cout << "printing done" << std::endl;
 //checkOrder();
     checkBF();

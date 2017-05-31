@@ -156,7 +156,7 @@ void AVLBigTree() {
 }
 int main(){
  AVLTreeRollTest();
- AVLBigTree();
+ //AVLBigTree();
 
  return 0;
 }
