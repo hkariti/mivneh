@@ -376,8 +376,8 @@ std::cout << "parent error" << std::endl;
     checkRankRecurse(head);
   }
 
-  static Node* buildEmptyRecursive(Node* head, int n){
-    if(n == 1) return NULL;
+  static void buildEmptyRecursive(Node* head, int n){
+    if(n == 1) return;
     head->left = new Node(head);
     head->right = new Node(head);
 
