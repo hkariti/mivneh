@@ -407,7 +407,7 @@ std::cout << "parent error" << std::endl;
   }
 
   static Node* buildEmpty(int n){
-    int hight = ceil(log2(n));
+    int hight = ceil(log2(n + 1));
     Node* head = new Node(NULL);
     buildEmptyRecursive(head, hight);
     Node* current = head;
