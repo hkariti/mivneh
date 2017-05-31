@@ -337,7 +337,7 @@ std::cout << "parent error" << std::endl;
       }
     }
     else{
-      if(current->numberLeft != current->left->numberLeft + current->right->numberRight + 1){
+      if(current->numberLeft != current->left->numberLeft + current->left->numberRight + 1){
         std::cout << "there are nodes to the left, but the numbers dont agree"  << std::endl;
         throw DebugException();
       }
