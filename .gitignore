@@ -5,6 +5,7 @@
 *.o
 *.a
 *.dSYM
+.vagrant
 
 
 ## Emacs stuff
