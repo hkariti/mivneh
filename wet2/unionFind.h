@@ -60,6 +60,9 @@ public:
     while(*(parents + j) != not_there){
       root2 = *(parents +j);
     }
+    // If both nodes are in the same group, do nothing
+    if (root1 == root2) return root1;
+
     int smallRoot, largeRoot;
     if(*(number_of_sons + root1) >= *(number_of_sons + root2)) {
       largeRoot = root1;

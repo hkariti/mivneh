@@ -1,6 +1,6 @@
 #include "team.h"
 #include "hashTable.h"
-#include "union_find.h"
+#include "unionFind.h"
 #include "library2.h"
 
 typedef UnionFind<Team> TeamUnion;
