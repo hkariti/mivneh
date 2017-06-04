@@ -21,6 +21,7 @@ public:
   void init(const Key& new_key, const Value& new_value) {
     key = new_key;
     state = full;
+    if (value) delete value;
     value = new Value(new_value);
   }
   const Key& getKey() const { return key; };

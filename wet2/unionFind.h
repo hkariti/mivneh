@@ -53,12 +53,12 @@ public:
     if(i <= 0 || j <= 0 || i > size || j > size){
       throw NoSuchTeam();
     }
-    int root1, root2;
-    while(*(parents + i) != not_there){
-      root1 = *(parents + i);
+    int root1=i, root2=j;
+    while(parents[root1] != not_there){
+      root1 = parents[root1];
     }
-    while(*(parents + j) != not_there){
-      root2 = *(parents +j);
+    while(parents[root2] != not_there){
+      root2 = parents[root2];
     }
     // If both nodes are in the same group, do nothing
     if (root1 == root2) return root1;
