@@ -82,7 +82,6 @@ void FightTest(){
   assert(technion.addStudent(4,2,10) == SUCCESS);
   assert(technion.addStudent(5,3,100) == SUCCESS);
   assert(technion.addStudent(6,1,1) == SUCCESS);
-  assert(technion.addStudent(7,1,97) == SUCCESS);
 
   int wins = 0;
 
@@ -104,6 +103,7 @@ void FightTest(){
   assert(technion.getNumOfWins(2, &wins) == SUCCESS);
   assert(wins == 1);
 
+  assert(technion.addStudent(7,1,97) == SUCCESS);
   //team3 beats team 1
   assert(technion.teamFight(1,3,1) == SUCCESS);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
