@@ -88,6 +88,8 @@ public:
       Student& student = students[studentId];
       Team& team = teams.find(student.getTeamId());
       *leader = team.getMostPowerfulStudent();
+    } catch (StudentMap::NoSuchEntry) {
+      return FAILURE;
     } catch (std::bad_alloc) {
       return ALLOCATION_ERROR;
     }

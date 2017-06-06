@@ -408,6 +408,7 @@ std::cout << "parent error" << std::endl;
 
   static Node* buildEmpty(int n){
     int hight = ceil(log2(n + 1));
+    if (hight == 0) return NULL;
     Node* head = new Node(NULL);
     buildEmptyRecursive(head, hight);
     Node* current = head;
@@ -520,6 +521,7 @@ std::cout << std::endl;
     int powerSum = 0;
     Node* current = head;
 
+    if (!current) return 0;
     if(1 + current->numberRight + current->numberLeft <= x){
       return current->powerRight + current->powerLeft + *(current->key);
     }
@@ -766,6 +768,7 @@ std::cout << "printing done" << std::endl;
       size2 = 0;
     } 
     Node* newTree = buildEmpty(size1 + size2);
+    if (!newTree) return;
     Node* current = newTree;
     while(current->left != NULL){
       current = current->left;
