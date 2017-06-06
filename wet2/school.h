@@ -72,7 +72,7 @@ public:
   }
 
   StatusType getNumOfWins(int teamId, int* wins) {
-    if (!validTeam(teamId)) return INVALID_INPUT;
+    if (!validTeam(teamId) || wins == NULL) return INVALID_INPUT;
     try {
       Team& team = teams.find(teamId);
       *wins = team.getWins();
@@ -83,7 +83,7 @@ public:
   }
 
   StatusType getStudentTeamLeader(int studentId, int* leader) {
-    if (studentId <= 0) return INVALID_INPUT;
+    if (studentId <= 0 || leader == NULL) return INVALID_INPUT;
     try {
       Student& student = students[studentId];
       Team& team = teams.find(student.getTeamId());
