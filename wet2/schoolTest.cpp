@@ -79,8 +79,8 @@ void FightTest(){
   assert(technion.addStudent(1,1,1) == SUCCESS);
   assert(technion.addStudent(2,1,1) == SUCCESS);
   assert(technion.addStudent(3,1,1) == SUCCESS);
-  assert(technion.addStudent(4,3,10) == SUCCESS);
-  assert(technion.addStudent(5,2,100) == SUCCESS);
+  assert(technion.addStudent(4,2,10) == SUCCESS);
+  assert(technion.addStudent(5,3,100) == SUCCESS);
   assert(technion.addStudent(6,1,1) == SUCCESS);
   assert(technion.addStudent(7,1,97) == SUCCESS);
 
@@ -93,36 +93,46 @@ void FightTest(){
   assert(technion.teamFight(4,1,1) == INVALID_INPUT);
   assert(technion.teamFight(1,4,1) == INVALID_INPUT);
   assert(technion.getNumOfWins(0, &wins) == INVALID_INPUT);
-  assert(technion.getNumOfWins(1, &wins) == INVALID_INPUT);
+  assert(technion.getNumOfWins(1, NULL) == INVALID_INPUT);
 
 
   //valid input
+  //team 2 beats team 1
   assert(technion.teamFight(2,1,1) == SUCCESS);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
   assert(wins == 0);
   assert(technion.getNumOfWins(2, &wins) == SUCCESS);
   assert(wins == 1);
+
+  //team3 beats team 1
   assert(technion.teamFight(1,3,1) == SUCCESS);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
   assert(wins == 0);
-  assert(technion.getNumOfWins(4, &wins) == SUCCESS);
+  assert(technion.getNumOfWins(3, &wins) == SUCCESS);
   assert(wins == 1);
+
+  // team 1 and 3 tie
   assert(technion.teamFight(1,3,4) == SUCCESS);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
   assert(wins == 0);
-  assert(technion.getNumOfWins(4, &wins) == SUCCESS);
+  assert(technion.getNumOfWins(3, &wins) == SUCCESS);
   assert(wins == 1);
+
+  // team 1 beats team 3
   assert(technion.teamFight(1,3,100) == SUCCESS);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
   assert(wins == 1);
-  assert(technion.getNumOfWins(4, &wins) == SUCCESS);
+  assert(technion.getNumOfWins(3, &wins) == SUCCESS);
   assert(wins == 1);
 
+  // join team 1 and 2
   assert(technion.joinTeams(1,2) == SUCCESS);
   assert(technion.getNumOfWins(2, &wins) == SUCCESS);
   assert(wins == 2);
   assert(technion.getNumOfWins(1, &wins) == SUCCESS);
   assert(wins == 2);
+
+  //join team 2 and 3
   assert(technion.joinTeams(2,3) == SUCCESS);
   assert(technion.getNumOfWins(3, &wins) == SUCCESS);
   assert(wins == 3);
