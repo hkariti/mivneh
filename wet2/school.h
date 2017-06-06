@@ -37,8 +37,8 @@ public:
       Student& student = students[studentID];
       int teamId = student.getTeamId();
       Team& team = teams.find(teamId);
-      students.remove(studentID);
       team.removeStudent(student.getPower(), student.getID());
+      students.remove(studentID);
     } catch (StudentMap::NoSuchEntry){
       return FAILURE;
     } catch (std::bad_alloc) {
