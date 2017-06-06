@@ -15,8 +15,11 @@ std::string stringWithSuffix(int suffix) {
 
 void testInsert() {
   TestTable table;
-  for (int i = 0; i < 1000; i++)
-    table.insert(i, stringWithSuffix(i));
+  std::string s;
+  for (int i = 0; i < 1000; i++) {
+    s = table.insert(i, stringWithSuffix(i));
+    assert(s == stringWithSuffix(i));
+  }
 }
 
 void testRemove() {
@@ -71,17 +74,29 @@ void testGet() {
   // Empty
   THROWS(table[0], TestTable::NoSuchEntry);
 
-  // With values
+  // Add a value and save its reference
+  // Save some value reference
+  std::string& valueThousand(table.insert(10000, "Test"));
+
+  // Add more values, causing resize
   for (int i = 0; i < 1000; i++) {
     table.insert(i, stringWithSuffix(i));
     assert(table[i] == stringWithSuffix(i));
   }
 
-  // Set them again
+  // Save another value reference
+  std::string& valueZero(table[0]);
+
+  // Set values again
   for (int i = 0; i < 1000; i++) {
     table[i] = stringWithSuffix(1000+i);
     assert(table[i] == stringWithSuffix(1000+i));
   }
+
+  // references should still be correct
+  assert(valueThousand == "Test");
+  assert(valueThousand == table[10000]);
+  assert(valueZero == table[0]);
 
   // Remove
   for (int i = 0; i < 1000; i++) {
