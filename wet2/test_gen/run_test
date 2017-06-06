@@ -1,0 +1,73 @@
+#!/bin/bash
+
+CURDIR=`dirname "$0"`
+function run_test {
+    if (( $# != 4 )); then
+        echo "Usage: ./run_test <number_of_lines> <test_id> <random_seed (0 to chose randomly)> <no failures mode (0/1)>"
+        exit
+    fi
+    failed=
+    num_of_lines=$1
+    test_name="randtest"$2
+	random_seed=$3 
+	no_failures=$4
+    out_file=${test_name}.my.out
+    valgrind_out=${test_name}.valgrind
+    if (( num_of_lines <= 0 )); then
+        echo "<number_of_lines> must be positive"
+        exit
+    fi
+    echo "generating a random test... ${test_name}.in ${test_name}.out"
+    python2 $CURDIR/generator.py $num_of_lines $test_name $random_seed 0 $no_failures  
+
+    echo "running... ./main < $test_name.in > $out_file"
+    echo "running valgrind..."
+    valgrind --log-file=$valgrind_out --leak-check=full ./main < $test_name.in > $out_file
+    if ! grep -q "[1-9][0-9]* bytes in 0 blocks" $valgrind_out && grep -q "0 errors" $valgrind_out; then
+        echo "MEMORY CHECK PASSED"
+    else
+        echo "MEMORY CHECK FAILED"
+        failed=1
+    fi
+    log_name=${test_name}.log
+    echo "diff result: wanted_output VS my_output" > $log_name
+    diff ${test_name}.out $out_file >> $log_name
+    diff_ret=$?
+    if (( diff_ret == 0 )); then
+        echo "TEST PASSED"
+    else
+        echo "TEST FAILED"
+        failed=1
+        python2 $CURDIR/translate.py ${test_name}.in
+        echo "the differences are stored in ${log_name} "
+        echo "you can find C version of this test (for debugging) in ${test_name}.debug.cc"
+    fi
+    echo 
+    echo 
+    if [ -z "$failed" ]; then
+        rm -f "$valgrind_out" $out_file $log_name
+    fi
+}
+
+let test_num=0
+lines_num=(100 250 500 1000 5000 10000)  # try to change those
+echo "compiling... g++ -g *.cpp -std=c++0x -DNDEBUG -Wall -o main"
+if g++ -g main2.cpp library2.cpp -std=c++0x -DNDEBUG -Wall -o main; then 
+    echo "compilation successfull!"
+else
+    echo "compilation failed!"
+    exit
+fi
+for num_of_lines in ${lines_num[@]} ; do
+    run_test "$num_of_lines" "$test_num" 0 0 
+    let test_num++
+done 
+
+# try to change run_test parameters:
+
+#	run_test "$num_of_lines" "$test_num" 12345 0   
+#	to set random seed (you will get same result for each generation with same seed)
+#	you can choose any number to be seed
+
+#	run_test "$num_of_lines" "$test_num" 0 1
+#	to create tests without FAILURE's (in this case actual length will be less than defined in lines_num)
