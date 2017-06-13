@@ -1,3 +1,5 @@
+#ifndef HASH_TABLE
+#define HASH_TABLE
 #include <exception>
 #include <cstddef>
 
@@ -140,3 +142,4 @@ private:
     return index;
   }
 };
+#endif
